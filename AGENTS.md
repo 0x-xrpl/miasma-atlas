@@ -16,12 +16,12 @@ Always optimize for:
 - clear Sui-native architecture
 - no broken build
 - no unused over-engineering in the main app
-- no accidental competitor copying
+- no accidental external reference copying
 - no legacy demo remnants
 
-Never copy competitor code.
-Never copy competitor UI.
-Never copy competitor logos.
+Never copy external reference code.
+Never copy external reference UI.
+Never copy external reference logos.
 Never import anything from `reference/` or any previous seed project archive.
 Never use reference material at runtime.
 Never make the final app look like Shell, Audric, NVRAM, Remora, or any other project.

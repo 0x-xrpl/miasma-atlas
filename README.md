@@ -9,6 +9,8 @@ It was poisoned in memory.
 
 **Map. Verify. Block. Funds moved: 0.**
 
+Sui is the settlement and receipt layer for the blocked decision and the public audit trail.
+
 <img src="https://img.shields.io/static/v1?label=LOCAL_RUST_VERIFIER&message=passing&color=36F7DF&labelColor=0B1114" />
 <img src="https://img.shields.io/static/v1?label=SUI_MOVE_BUILD&message=passing&color=4DA3FF&labelColor=0B1114" />
 <img src="https://img.shields.io/static/v1?label=SKILL_FIREWALL&message=enabled&color=FF5B50&labelColor=0B1114" />
@@ -176,4 +178,3 @@ sui move build --path move
 - [docs/ZK_QUARANTINE_PROOF.md](docs/ZK_QUARANTINE_PROOF.md)
 - [docs/SKILL_FIREWALL.md](docs/SKILL_FIREWALL.md)
 - [docs/MCP_INTERFACE.md](docs/MCP_INTERFACE.md)
-
