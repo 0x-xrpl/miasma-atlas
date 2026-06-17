@@ -1,0 +1,6 @@
+{
+  "proofStatus": "scaffolded",
+  "proofRef": "groth16://local/sample/quarantine-proof",
+  "result": "rule_satisfied",
+  "note": "Sample proof artifact only. No production Groth16 proof is produced here."
+}

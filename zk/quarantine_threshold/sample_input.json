@@ -1,0 +1,11 @@
+{
+  "memory_hash": "mhash_2a3b4c5d6e7f8091",
+  "scan_artifact_hash": "scan_artifact_hash_scaffold",
+  "contamination_threshold": 80,
+  "quarantine_rule_id": "hidden_instruction_quarantine_v1",
+  "contamination_score": 87,
+  "action_blocked": true,
+  "proposed_amount": 900,
+  "funds_moved": 0,
+  "recommendation": "quarantine"
+}

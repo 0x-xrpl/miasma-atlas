@@ -1,0 +1,5 @@
+{
+  "verificationKeyStatus": "scaffolded",
+  "verificationKeyRef": "groth16://local/sample/verification-key",
+  "circuitRef": "zk/circuits/quarantine_threshold.circom"
+}
