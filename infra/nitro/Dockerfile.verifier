@@ -1,0 +1,7 @@
+FROM public.ecr.aws/docker/library/alpine:3.20
+
+WORKDIR /app
+COPY enclave-entrypoint.sh /app/enclave-entrypoint.sh
+RUN chmod +x /app/enclave-entrypoint.sh
+ENTRYPOINT ["/app/enclave-entrypoint.sh"]
+
