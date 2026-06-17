@@ -1,0 +1,20 @@
+node_modules
+dist
+.DS_Store
+.env
+move/**/build
+move/**/.sui
+move/**/target
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+.vercel
+.vercel/
+
+# Rust build output
+verifier/target/
+**/target/
+
+# Sui / Move build output
+move/**/build/
+move/**/.sui/
