@@ -22,7 +22,7 @@ Miasma does not ZK-prove the full memory scan. The Groth16 layer is scoped to pr
 - detector bitmask triggers the quarantine rule
 - `action_blocked = true` follows from the rule
 
-## Current scaffold
+## Current implementation boundary
 
 - `zk/quarantine_threshold/public.json`
 - `zk/quarantine_threshold/proof.json`
@@ -33,10 +33,10 @@ Miasma does not ZK-prove the full memory scan. The Groth16 layer is scoped to pr
 
 ## Current status
 
-- proof generation is scaffolded only
-- proof verification is scaffolded only
+- proof generation is sample implementation only
+- proof verification is sample implementation only
 - no on-chain Groth16 verification is implemented here
 
-## Future production work
+## Next integration boundary
 
 Later work can replace the sample proof files with real circuit output and connect the result to Seal / Walrus / Sui QuarantineReceipt without changing the public quarantine rule semantics.

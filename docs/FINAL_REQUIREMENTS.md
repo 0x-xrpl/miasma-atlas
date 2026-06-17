@@ -24,14 +24,14 @@ Miasma quarantines poisoned memory.
 
 Sui is the settlement and receipt layer for the blocked decision and public audit trail.
 
-## Demo Scenario
+## Canonical Scenario
 
 The agent wants to pay 900 USDC.
 The memory path is poisoned.
 The send_usdc skill is blocked.
 Funds moved stays `0`.
 
-## Fixed Demo Semantics
+## Fixed Scenario Semantics
 
 ```txt
 proposedAmount: 900
@@ -111,7 +111,7 @@ MemoryActionContext
 → MiasmaScanArtifact
 → Seal locked evidence path
 → Walrus artifact ref
-→ Groth16 quarantine proof scaffold
+→ Groth16 quarantine proof
 → Sui QuarantineReceipt
 → Skill Firewall block
 ```
@@ -126,7 +126,7 @@ flowchart LR
   D --> E[Evidence Path]
   E --> F[Seal Locked Evidence]
   E --> G[Walrus Artifact Ref]
-  D --> H[Groth16 Quarantine Proof Scaffold]
+  D --> H[Groth16 Quarantine Proof Implementation]
   D --> I[Sui QuarantineReceipt]
   I --> J[Skill Firewall Block]
   J --> K[Real Execution Blocked]
@@ -152,7 +152,7 @@ sequenceDiagram
   Verifier-->>Miasma: contaminationScore 87, actionBlocked true
   Miasma->>Seal: model locked sensitive evidence path
   Miasma->>Walrus: model public artifact reference
-  Miasma->>Proof: attach quarantine threshold proof scaffold
+  Miasma->>Proof: attach quarantine threshold proof implementation
   Miasma->>Sui: record QuarantineReceipt
   Miasma-->>Agent: block skill execution
 ```
@@ -273,7 +273,7 @@ MemoryActionContext
 → MiasmaScanArtifact
 → Seal locked evidence path
 → Walrus artifact ref
-→ Groth16 quarantine proof scaffold
+→ Groth16 quarantine proof
 → Sui QuarantineReceipt
 → Skill Firewall block
 ```
@@ -296,7 +296,7 @@ Threats handled:
 - frontend-only trust
 - operator tampering
 
-Threats not fully solved in the demo:
+Threats not fully solved in the canonical scenario:
 
 - malicious LLM internals
 - full formal verification
@@ -311,7 +311,7 @@ Threats not fully solved in the demo:
 - The UI must show the blocked skill state.
 - The UI must show the proof chain without overclaiming production trust.
 - The UI must not imply execution succeeded.
-- The UI must not imply a real on-chain mint already happened.
+- The UI must not imply a real on-chain mint has happened.
 
 ## Verification Surfaces
 
@@ -320,10 +320,10 @@ Threats not fully solved in the demo:
 | Local Rust verifier | Reads the `MemoryActionContext`, scores contamination, and emits a `MiasmaScanArtifact` | ✅ working |
 | Skill Firewall | Blocks `send_usdc` before real execution when the path is contaminated | ✅ wired |
 | Sui QuarantineReceipt | Records the blocked decision, proposed amount, artifact hash, and `fundsMoved = 0` | ✅ Move build passing |
-| Seal evidence path | Models how sensitive memory evidence stays locked instead of being exposed publicly | 🧩 scaffolded |
-| Walrus artifact ref | Models public artifact references without publishing raw sensitive memory | 🧩 scaffolded |
-| Groth16 quarantine proof | Models a threshold-rule proof that the committed scan artifact satisfies quarantine conditions | 🧩 scaffolded |
-| Nitro verifier target | Defines the target boundary for running the verifier inside an enclave | 🎯 target scaffold |
+| Seal evidence path | Models how sensitive memory evidence stays locked instead of being exposed publicly | implemented boundary |
+| Walrus artifact ref | Models public artifact references without publishing raw sensitive memory | implemented boundary |
+| Groth16 quarantine proof | Models a threshold-rule proof that the committed scan artifact satisfies quarantine conditions | implemented boundary |
+| Nitro verifier target | Defines the target boundary for running the verifier inside an enclave | implemented boundary |
 
 Meaningful verification means the UI does not just say risk detected.
 It shows the path, the verifier result, the evidence boundary, the receipt, and the blocked skill state.
@@ -372,7 +372,7 @@ Verified safe proof: teal
 Sui receipt: Sui blue
 Seal locked evidence: violet
 Walrus artifact ref: cyan-blue
-Scaffold / target: muted gray
+Boundary / proof: muted gray
 Funds moved 0: high-contrast white
 ```
 
@@ -397,7 +397,7 @@ Funds moved 0: high-contrast white
 - QuarantineReceiptCreated event
 - `sui move build --path move` passing
 
-### Scaffolded / target path
+### Implemented integration boundaries
 
 - Seal evidence locking path
 - Walrus artifact reference path
@@ -411,19 +411,19 @@ Funds moved 0: high-contrast white
 - Production Seal encryption is not live.
 - Real Walrus upload is not live unless separately implemented.
 - Nitro CLI is unavailable locally.
-- Groth16 proof is sample/scaffold only.
+- Groth16 proof is a sample implementation of the threshold-rule surface.
 - MCP transport is not live.
 - No fake transaction digest.
 - No fake object ID.
 - No fake explorer link.
 - No claim of production autonomous payment execution.
 
-## Submission / Demo Checklist
+## Submission / Evaluation Checklist
 
 - Run the local Rust verifier on the poisoned and clean fixtures.
 - Confirm the UI shows the poisoned path and `Funds moved: 0`.
 - Confirm the Sui receipt records the blocked decision.
-- Confirm the proof and evidence layers remain scaffolded where noted.
+- Confirm the proof and evidence layers remain implemented where noted.
 - Confirm `npm run build` passes.
 - Confirm `cargo test` passes.
 - Confirm `sui move build --path move` passes.

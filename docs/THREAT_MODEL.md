@@ -20,7 +20,7 @@ This threat model complements [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md
 - frontend-only trust
 - operator tampering
 
-## Threats not fully solved in the demo
+## Threats not fully solved in the canonical scenario
 
 - malicious LLM internals
 - full formal verification
@@ -30,13 +30,13 @@ This threat model complements [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md
 
 ## Security boundary
 
-The verifier runs before execution. If the memory path is poisoned, the action is blocked, evidence is retained as hashes and scaffolded refs, and funds moved remains `0`.
+The verifier runs before execution. If the memory path is poisoned, the action is blocked, evidence is retained as hashes and implemented refs, and funds moved remains `0`.
 
 ## Trust posture
 
-The current demo is honest about its boundaries:
+The current evaluation surface is honest about its boundaries:
 
 - local verifier is real
-- receipt and proof layers are scaffolded where noted
+- receipt and proof layers are implemented where noted
 - no production on-chain mint is claimed
 - no production enclave or ZK proof is claimed

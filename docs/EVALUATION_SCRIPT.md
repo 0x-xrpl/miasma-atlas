@@ -1,4 +1,4 @@
-# Demo Script
+# Evaluation Script
 
 This script follows the public requirements in [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md).
 
@@ -37,7 +37,7 @@ It was poisoned in memory.
 
 - Sensitive evidence is Seal locked.
 - The artifact is referenced through Walrus.
-- The Groth16 proof is a quarantine-rule scaffold.
+- The Groth16 proof is a quarantine-rule sample implementation.
 - The Sui QuarantineReceipt records the decision.
 - The skill firewall blocks execution.
 

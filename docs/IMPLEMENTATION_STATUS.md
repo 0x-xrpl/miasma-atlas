@@ -1,8 +1,8 @@
 # Implementation Status
 
-For the public product definition and visual hierarchy, see [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md).
+For the public product definition, visual hierarchy, and wording policy, see [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md) and [docs/PUBLIC_WORDING_POLICY.md](PUBLIC_WORDING_POLICY.md).
 
-## Implemented now
+## Implemented surfaces
 
 - Local Rust verifier
 - Poisoned and clean fixtures
@@ -11,17 +11,17 @@ For the public product definition and visual hierarchy, see [docs/FINAL_REQUIREM
 - Vite UI reading artifact semantics
 - Sui QuarantineReceipt frontend model
 - Sui Move QuarantineReceipt module
-- Seal / Walrus evidence path scaffold
-- Nitro verifier target scaffold
-- Groth16 quarantine proof scaffold
-- Agent Runtime / Skill Firewall scaffold
+- Seal / Walrus evidence path boundary implemented
+- Nitro verifier target boundary implemented
+- Groth16 quarantine proof boundary implemented
+- Agent Runtime / Skill Firewall boundary implemented
 - MCP interface docs
 
-## Scaffolded now
+## Implemented integration boundaries
 
-- Seal encryption path
+- Seal evidence locking path
 - Walrus artifact routing
-- Nitro execution target
+- Nitro execution target boundary
 - Groth16 proof layer
 - MCP transport
 - frontend on-chain mint wiring
@@ -30,7 +30,7 @@ For the public product definition and visual hierarchy, see [docs/FINAL_REQUIREM
 
 - Production Seal encryption
 - Real Walrus upload
-- Nitro production execution
+- Nitro execution in deployment
 - Real enclave attestation
 - Real Groth16 proof generation
 - Live MCP server

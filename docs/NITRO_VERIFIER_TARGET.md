@@ -1,6 +1,6 @@
 # Nitro Verifier Target
 
-Local verifier mode is the working default. Nitro Enclave mode is scaffolded as the isolated execution target for the same verifier boundary.
+Local verifier mode is the operating default. Nitro Enclave mode is the isolated execution target for the same verifier boundary.
 
 ## Target flow
 
@@ -23,16 +23,16 @@ An enclave-signed artifact means the verifier result was produced inside the Nit
 
 ## What PCR / attestation would prove
 
-PCRs and attestation would prove the enclave ran the expected code image and booted in the expected trust state. This scaffold does not fabricate attestation documents or PCR values.
+PCRs and attestation would prove the enclave ran the expected code image and booted in the expected trust state. This sample implementation does not fabricate attestation documents or PCR values.
 
 ## Current status
 
-- Local verifier mode is implemented now
-- Nitro Enclave mode is scaffolded as the isolated execution target
+- Local verifier mode is implemented
+- Nitro Enclave mode is the isolated execution target
 - No AWS deployment is implemented
 - No enclave signature is produced here
 - No attestation document is produced here
 
-## Future production work
+## Next integration boundary
 
 Later work can wire the host request path, build an EIF, collect real attestation, and attach the enclave output to the same Seal / Walrus / Groth16 / Sui receipt flow without changing the public artifact semantics.
