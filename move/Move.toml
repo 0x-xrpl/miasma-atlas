@@ -1,0 +1,7 @@
+[package]
+name = "miasma_atlas"
+version = "0.0.1"
+edition = "2024.beta"
+
+[addresses]
+miasma_atlas = "0x0"
