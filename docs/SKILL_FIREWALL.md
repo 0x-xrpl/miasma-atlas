@@ -10,7 +10,7 @@ The firewall checks:
 
 If contamination is detected, contaminated skill use is blocked and `fundsMoved` stays `0`.
 
-## Current scaffold
+## Current implementation boundary
 
 - `src/lib/miasma/agent-runtime.ts`
 - `src/lib/miasma/skill-manifest.ts`

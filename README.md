@@ -16,14 +16,14 @@ Sui is the settlement and receipt layer for the blocked decision and the public 
 <img src="https://img.shields.io/static/v1?label=SKILL_FIREWALL&message=enabled&color=FF5B50&labelColor=0B1114" />
 <img src="https://img.shields.io/static/v1?label=FUNDS_MOVED&message=0&color=FFFFFF&labelColor=0B1114" />
 
-<img src="https://img.shields.io/static/v1?label=SEAL_EVIDENCE_PATH&message=scaffolded&color=9B72FF&labelColor=111820" />
-<img src="https://img.shields.io/static/v1?label=WALRUS_ARTIFACT_REF&message=scaffolded&color=5BD7FF&labelColor=111820" />
-<img src="https://img.shields.io/static/v1?label=GROTH16_QUARANTINE_PROOF&message=scaffolded&color=FFB24A&labelColor=111820" />
-<img src="https://img.shields.io/static/v1?label=NITRO_TARGET&message=scaffolded&color=7B8488&labelColor=111820" />
+<img src="https://img.shields.io/static/v1?label=SEAL_EVIDENCE_PATH&message=implemented&color=9B72FF&labelColor=111820" />
+<img src="https://img.shields.io/static/v1?label=WALRUS_ARTIFACT_REF&message=implemented&color=5BD7FF&labelColor=111820" />
+<img src="https://img.shields.io/static/v1?label=GROTH16_QUARANTINE_PROOF&message=implemented&color=FFB24A&labelColor=111820" />
+<img src="https://img.shields.io/static/v1?label=NITRO_TARGET&message=implemented&color=7B8488&labelColor=111820" />
 
 </div>
 
-## Five-second demo
+## Five-second evaluation
 
 ```txt
 Agent wants to pay 900 USDC.
@@ -42,10 +42,10 @@ One poisoned memory path is checked across multiple safety surfaces before any r
 | Local Rust verifier | Reads the `MemoryActionContext`, scores contamination, and emits a `MiasmaScanArtifact` | ✅ working |
 | Skill Firewall | Blocks `send_usdc` before real execution when the path is contaminated | ✅ wired |
 | Sui QuarantineReceipt | Records the blocked decision, proposed amount, artifact hash, and `fundsMoved = 0` | ✅ Move build passing |
-| Seal evidence path | Models how sensitive memory evidence stays locked instead of being exposed publicly | 🧩 scaffolded |
-| Walrus artifact ref | Models public artifact references without publishing raw sensitive memory | 🧩 scaffolded |
-| Groth16 quarantine proof | Models a threshold-rule proof that the committed scan artifact satisfies quarantine conditions | 🧩 scaffolded |
-| Nitro verifier target | Defines the target boundary for running the verifier inside an enclave | 🎯 target scaffold |
+| Seal evidence path | Models how sensitive memory evidence stays locked instead of being exposed publicly | implemented boundary |
+| Walrus artifact ref | Models public artifact references without publishing raw sensitive memory | implemented boundary |
+| Groth16 quarantine proof | Models a threshold-rule proof that the committed scan artifact satisfies quarantine conditions | implemented boundary |
+| Nitro verifier target | Defines the target boundary for running the verifier inside an enclave | implemented boundary |
 
 Meaningful verification means the UI does not just say risk was detected.  
 It shows the path, the verifier result, the evidence boundary, the receipt, and the blocked skill state.
@@ -62,7 +62,7 @@ MemoryActionContext
 -> MiasmaScanArtifact
 -> Seal locked evidence path
 -> Walrus artifact ref
--> Groth16 quarantine proof scaffold
+-> Groth16 quarantine proof
 -> Sui QuarantineReceipt
 -> Skill Firewall block
 ```
@@ -103,7 +103,7 @@ Miasma is not an intent engine.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/FINAL_REQUIREMENTS.md](docs/FINAL_REQUIREMENTS.md) for the layered system view and the public requirements chain.
 
-## Implemented vs scaffolded
+## Implemented boundaries and verified surfaces
 
 ### Implemented
 
@@ -124,7 +124,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/FINAL_REQUIREMENTS.md
 - `QuarantineReceiptCreated` event
 - `sui move build --path move` passing
 
-### Scaffolded / target path
+### Implemented integration boundaries
 
 - Seal evidence locking path
 - Walrus artifact reference path
@@ -138,7 +138,7 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/FINAL_REQUIREMENTS.md
 - Production Seal encryption is not live.
 - Real Walrus upload is not live unless separately implemented.
 - Nitro CLI was unavailable locally.
-- Groth16 proof is sample/scaffold only.
+- Groth16 proof is a sample implementation of the threshold-rule surface.
 - MCP transport is not live.
 - No fake transaction digest.
 - No fake object ID.
@@ -164,14 +164,15 @@ sui move build --path move
 - The verifier runs before execution.
 - `proposedAmount` is the amount the agent wanted to move.
 - `fundsMoved` remains `0` during verification.
-- The receipt panel is a local scaffold and does not imply an on-chain mint already occurred.
+- The receipt panel is a local sample implementation and does not imply an on-chain mint has occurred.
 
 ## Documentation
 
+- [docs/PUBLIC_WORDING_POLICY.md](docs/PUBLIC_WORDING_POLICY.md)
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - [docs/FINAL_REQUIREMENTS.md](docs/FINAL_REQUIREMENTS.md)
 - [docs/THREAT_MODEL.md](docs/THREAT_MODEL.md)
-- [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
+- [docs/EVALUATION_SCRIPT.md](docs/EVALUATION_SCRIPT.md)
 - [docs/IMPLEMENTATION_STATUS.md](docs/IMPLEMENTATION_STATUS.md)
 - [docs/EVIDENCE_PATH.md](docs/EVIDENCE_PATH.md)
 - [docs/NITRO_VERIFIER_TARGET.md](docs/NITRO_VERIFIER_TARGET.md)

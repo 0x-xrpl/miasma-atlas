@@ -1,6 +1,6 @@
-# MCP Interface Scaffold
+# MCP Interface
 
-This document describes the intended MCP surface for Miasma Atlas. It is an interface scaffold, not a production server.
+This document describes the intended MCP surface for Miasma Atlas. It is an interface boundary, not a server implementation.
 
 ## Intended tools
 
@@ -23,9 +23,9 @@ This document describes the intended MCP surface for Miasma Atlas. It is an inte
 ## Current status
 
 - No production MCP server is implemented here.
-- The local UI and domain models act as the scaffold.
+- The local UI and domain models act as the implementation boundary.
 - Local verifier mode remains the working default.
 
-## Future work
+## Next integration boundary
 
 Later work can map these tool names to real MCP handlers without changing the underlying quarantine semantics.

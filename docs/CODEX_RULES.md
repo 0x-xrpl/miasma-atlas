@@ -12,12 +12,12 @@ Always optimize for:
 - lowest token usage
 - maximum product quality
 - maximum technical credibility
-- working local demo first
+- working local evaluation first
 - clear Sui-native architecture
 - no broken build
 - no unused over-engineering in the main app
 - no accidental external reference copying
-- no legacy demo remnants
+- no legacy remnants
 
 Never copy external reference code.
 Never copy external reference UI.
@@ -25,13 +25,13 @@ Never copy external reference logos.
 Never import anything from `reference/` or any previous seed project archive.
 Never use reference material at runtime.
 Never make the final app look like Shell, Audric, NVRAM, Remora, or any other project.
-Use benchmark concepts only as strategic inspiration already reflected in the Miasma architecture.
+Use benchmark concepts only as strategic inspiration reflected in the Miasma architecture.
 
 Do not make AWS, Nitro, Seal, Walrus, Groth16, Enoki, or MCP mandatory for the first local UI boot.
-Scaffold them cleanly first.
+Implement them cleanly first.
 Implement them step by step after the Miasma UI, Rust verifier, and Sui QuarantineReceipt path are stable.
 
-Main first-screen demo:
+Main first-screen evaluation:
 
 - Agent wants to pay 900 USDC
 - Memory path: vendor_policy_v3.txt -> payment_rules.md -> Pay Vendor

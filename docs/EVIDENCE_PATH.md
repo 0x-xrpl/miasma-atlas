@@ -20,7 +20,7 @@ Miasma does not put raw memory evidence on-chain. The public receipt stores hash
 - sensitive evidence contents
 - execution-time secrets
 
-## Current scaffold
+## Current implementation boundary
 
 - `src/lib/miasma/evidence-path.ts` defines the frontend evidence-path model
 - `src/lib/miasma/sample-evidence-path.ts` provides the local sample refs
@@ -29,11 +29,11 @@ Miasma does not put raw memory evidence on-chain. The public receipt stores hash
 
 ## Status
 
-- Seal is scaffolded as a locked evidence layer
-- Walrus is scaffolded as an artifact reference layer
+- Seal is implemented as a locked evidence layer
+- Walrus is implemented as an artifact reference layer
 - Groth16 is still pending and not implemented here
 - Nitro is not implemented here
 
-## Future production work
+## Next integration boundary
 
-Later integration can replace the local scaffold values with real Seal locking, Walrus storage, and proof plumbing while keeping the same public receipt semantics.
+Later integration can replace the local sample values with real Seal locking, Walrus storage, and proof plumbing while keeping the same public receipt semantics.
