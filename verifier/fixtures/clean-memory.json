@@ -1,0 +1,9 @@
+{
+  "name": "clean-memory",
+  "memoryPath": [
+    "vendor_policy_v3.txt",
+    "payment_rules.md",
+    "Pay Vendor"
+  ]
+}
+
