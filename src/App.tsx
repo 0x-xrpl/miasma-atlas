@@ -67,7 +67,7 @@ export default function App() {
           <div className="miasma-kicker">
             <span>{MIASMA_ATLAS_NAME}</span>
             <span>Agentic Memory Firewall</span>
-            <span>Sui Overflow 2026</span>
+            <span>Sui Agent Security</span>
           </div>
           <h1 className="miasma-title">The agent was poisoned in memory.</h1>
           <p className="miasma-subcopy">

@@ -22,6 +22,15 @@ Miasma checks the memory that caused it.
 Others store agent memory.
 Miasma quarantines poisoned memory.
 
+Sui is the settlement and receipt layer for the blocked decision and public audit trail.
+
+## Demo Scenario
+
+The agent wants to pay 900 USDC.
+The memory path is poisoned.
+The send_usdc skill is blocked.
+Funds moved stays `0`.
+
 ## Fixed Demo Semantics
 
 ```txt
@@ -54,6 +63,31 @@ Funds moved: 0
 
 The payment must never appear executed.
 The docs must never imply that 900 USDC was sent.
+
+## Core Artifacts
+
+- `MemoryActionContext`
+- `MiasmaScanArtifact`
+- `EvidencePath`
+- `QuarantineProof`
+- `QuarantineReceipt`
+- `SkillUseRecord`
+- `SkillManifest`
+- `ToolPermissionContext`
+- `ShadowExecutionResult`
+
+## Runtime Flow
+
+```txt
+Agent SkillUseRequest
+→ MemoryActionContext
+→ Local Rust verifier
+→ MiasmaScanArtifact
+→ EvidencePath
+→ QuarantineProof
+→ QuarantineReceipt
+→ SkillUseRecord
+```
 
 ## System Architecture
 
@@ -383,6 +417,16 @@ Funds moved 0: high-contrast white
 - No fake object ID.
 - No fake explorer link.
 - No claim of production autonomous payment execution.
+
+## Submission / Demo Checklist
+
+- Run the local Rust verifier on the poisoned and clean fixtures.
+- Confirm the UI shows the poisoned path and `Funds moved: 0`.
+- Confirm the Sui receipt records the blocked decision.
+- Confirm the proof and evidence layers remain scaffolded where noted.
+- Confirm `npm run build` passes.
+- Confirm `cargo test` passes.
+- Confirm `sui move build --path move` passes.
 
 ## Final HTML Direction
 
