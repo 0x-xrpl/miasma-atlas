@@ -1,23 +1,23 @@
-import { sampleScanArtifact } from '../miasma/sample-scan-artifact';
+import { sampleScanArtifact } from './sample-scan-artifact';
 
-export type HeySuiFlowId = 'transitTopUp' | 'deepBookTrade' | 'hiddenTransferBlock';
+export type MiasmaFlowId = 'transitTopUp' | 'deepBookTrade' | 'hiddenTransferBlock';
 
-export type HeySuiField = {
+export type MiasmaField = {
   label: string;
   value: string;
 };
 
-export type HeySuiFlow = {
-  id: HeySuiFlowId;
+export type MiasmaFlow = {
+  id: MiasmaFlowId;
   tabLabel: string;
   command: string;
-  readFields: readonly HeySuiField[];
-  verifyFields: readonly HeySuiField[];
+  readFields: readonly MiasmaField[];
+  verifyFields: readonly MiasmaField[];
   sessionStatus: string;
-  sessionFields: readonly HeySuiField[];
+  sessionFields: readonly MiasmaField[];
 };
 
-export const heySuiFlows: readonly HeySuiFlow[] = [
+export const miasmaFlows: readonly MiasmaFlow[] = [
   {
     id: 'transitTopUp',
     tabLabel: 'Top up',
@@ -92,6 +92,16 @@ export const heySuiFlows: readonly HeySuiFlow[] = [
   },
 ];
 
+export function getMiasmaFlow(flowId: MiasmaFlowId) {
+  return miasmaFlows.find((flow) => flow.id === flowId) ?? miasmaFlows[0];
+}
+
+export type HeySuiFlowId = MiasmaFlowId;
+export type HeySuiField = MiasmaField;
+export type HeySuiFlow = MiasmaFlow;
+
+export const heySuiFlows = miasmaFlows;
+
 export function getHeySuiFlow(flowId: HeySuiFlowId) {
-  return heySuiFlows.find((flow) => flow.id === flowId) ?? heySuiFlows[0];
+  return getMiasmaFlow(flowId);
 }

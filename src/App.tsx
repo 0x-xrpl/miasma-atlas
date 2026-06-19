@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   ConnectButton,
   useCurrentAccount,
@@ -13,8 +13,8 @@ import {
   buildLiveTestnetTransferTransaction,
   buildSuiVisionTxUrl,
 } from './sui';
+import { runAgenticActionFlow, type FlowResult } from './core';
 import { getHeySuiFlow, heySuiFlows, type HeySuiFlowId } from './lib/hey-sui/flows';
-import { sampleScanArtifact } from './lib/miasma/sample-scan-artifact';
 
 type Stage = 'idle' | 'listening' | 'intent_detected' | 'preview' | 'confirm' | 'executed' | 'blocked';
 
@@ -127,19 +127,6 @@ function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null 
   return browserWindow.SpeechRecognition ?? browserWindow.webkitSpeechRecognition ?? null;
 }
 
-function detectFlowId(command: string): HeySuiFlowId {
-  const normalized = command.toLowerCase();
-  if (normalized.includes('deepbook') || normalized.includes('sui falls')) {
-    return 'deepBookTrade';
-  }
-
-  if (normalized.includes('hidden transfer') || normalized.includes('recipient mismatch')) {
-    return 'hiddenTransferBlock';
-  }
-
-  return 'transitTopUp';
-}
-
 function shortAddress(address: string) {
   if (address.length <= 12) {
     return address;
@@ -156,6 +143,79 @@ function shortDigest(digest: string) {
   return `${digest.slice(0, 10)}…${digest.slice(-6)}`;
 }
 
+function flowToIntentFields(flow: FlowResult) {
+  return [
+    { label: 'Kind', value: flow.intent.kind },
+    { label: 'Flow', value: flow.intent.flowId },
+    { label: 'Confidence', value: `${Math.round(flow.intent.confidence * 100)}%` },
+    { label: 'Normalized', value: flow.intent.normalizedIntent },
+    { label: 'Reason', value: flow.intent.reason },
+    { label: 'Clarification', value: flow.intent.needsClarification ? 'Needed' : 'Not needed' },
+  ];
+}
+
+function flowToPreviewFields(flow: FlowResult) {
+  const preview = flow.preview;
+  if (preview.kind === 'transfer') {
+    return [
+      { label: 'Kind', value: preview.kind },
+      { label: 'Token', value: preview.token },
+      { label: 'Amount', value: String(preview.amount) },
+      { label: 'Recipient', value: preview.recipient },
+      { label: 'Mode', value: preview.executionMode },
+      { label: 'Funds moved', value: String(preview.fundsMoved) },
+    ];
+  }
+  if (preview.kind === 'deepbook_swap') {
+    return [
+      { label: 'Kind', value: preview.kind },
+      { label: 'Venue', value: preview.venue },
+      { label: 'Token in', value: preview.tokenIn },
+      { label: 'Token out', value: preview.tokenOut },
+      { label: 'Amount in', value: String(preview.amountIn) },
+      { label: 'Estimated output', value: String(preview.estimatedOutput) },
+      { label: 'Slippage bps', value: String(preview.slippageBps) },
+      { label: 'Funds moved', value: String(preview.fundsMoved) },
+    ];
+  }
+  return [
+    { label: 'Kind', value: preview.kind },
+    { label: 'Label', value: preview.label },
+    { label: 'Mode', value: preview.executionMode },
+    { label: 'Funds moved', value: String(preview.fundsMoved) },
+  ];
+}
+
+function flowToPolicyFields(flow: FlowResult) {
+  return [
+    { label: 'Rule', value: flow.policy.ruleId },
+    { label: 'Allowed', value: flow.policy.allowed ? 'Yes' : 'No' },
+    { label: 'Blocked', value: flow.policy.blocked ? 'Yes' : 'No' },
+    { label: 'Needs confirmation', value: flow.policy.requiresConfirmation ? 'Yes' : 'No' },
+    { label: 'Summary', value: flow.policy.summary },
+    { label: 'Reasons', value: flow.policy.reasons.join(' | ') || 'None' },
+  ];
+}
+
+function flowToBoundaryFields(flow: FlowResult) {
+  return Object.values(flow.boundaryStates).map((boundary) => ({
+    label: boundary.name,
+    value: `${boundary.state} — ${boundary.detail}`,
+  }));
+}
+
+function flowToReceiptFields(flow: FlowResult) {
+  return [
+    { label: 'Receipt ID', value: flow.receipt.receiptId },
+    { label: 'Status', value: flow.receipt.status },
+    { label: 'Decision', value: flow.receipt.decision },
+    { label: 'Summary', value: flow.receipt.summary },
+    { label: 'Funds moved', value: String(flow.receipt.fundsMoved) },
+    { label: 'Evidence ref', value: flow.receipt.evidenceRef.ref },
+    { label: 'Artifact ref', value: flow.receipt.artifactRef.ref },
+  ];
+}
+
 export default function App() {
   const [activeFlowId, setActiveFlowId] = useState<HeySuiFlowId>('transitTopUp');
   const [draft, setDraft] = useState(() => heySuiFlows[0].command);
@@ -170,25 +230,37 @@ export default function App() {
   const { mutateAsync: signAndExecuteTransaction, isPending: isExecuting } =
     useSignAndExecuteTransaction();
 
+  const coreFlow = useMemo(
+    () =>
+      runAgenticActionFlow(draft, {
+        confirmed: stage === 'confirm' || stage === 'executed',
+        source: 'voice',
+      }),
+    [draft, stage],
+  );
   const activeFlow = getHeySuiFlow(activeFlowId);
   const speechRecognitionAvailable = Boolean(getSpeechRecognitionConstructor());
-  const isLiveTransferFlow = activeFlowId === 'transitTopUp';
-  const isPreviewOnlyFlow = activeFlowId === 'deepBookTrade';
-  const isBlockedFlow = activeFlowId === 'hiddenTransferBlock';
+  const selectedTabIsBlocked = activeFlowId === 'hiddenTransferBlock';
+  const isLiveTransferFlow = coreFlow.intent.kind === 'transfer';
+  const isPreviewOnlyFlow =
+    coreFlow.intent.kind === 'deepbook_swap' ||
+    coreFlow.intent.kind === 'transit' ||
+    coreFlow.intent.kind === 'balance_check';
+  const isBlockedFlow = coreFlow.policy.blocked;
 
   useEffect(() => {
     setDraft(activeFlow.command);
     setExecutionRecord(null);
     setErrorMessage('');
-    setStage(isBlockedFlow ? 'blocked' : 'idle');
+    setStage(selectedTabIsBlocked ? 'blocked' : 'idle');
     setStatusMessage(
-      isBlockedFlow
+      selectedTabIsBlocked
         ? 'Hidden transfer block selected. Funds moved: 0.'
         : HEY_SUI_TAGLINE,
     );
     recognitionRef.current?.stop();
     recognitionRef.current = null;
-  }, [activeFlow.command, isBlockedFlow]);
+  }, [activeFlow.command, selectedTabIsBlocked]);
 
   useEffect(
     () => () => {
@@ -200,7 +272,6 @@ export default function App() {
 
   const syncIntent = (nextDraft: string) => {
     setDraft(nextDraft);
-    setActiveFlowId(detectFlowId(nextDraft));
     setStage('intent_detected');
     setStatusMessage('Intent detected.');
     setErrorMessage('');
@@ -258,7 +329,6 @@ export default function App() {
   };
 
   const previewIntent = () => {
-    setActiveFlowId(detectFlowId(draft));
     setStage('preview');
     setStatusMessage('Previewing the action session.');
     setErrorMessage('');
@@ -266,7 +336,6 @@ export default function App() {
   };
 
   const confirmIntent = () => {
-    setActiveFlowId(detectFlowId(draft));
     setStage('confirm');
     setStatusMessage('Action session confirmed.');
     setErrorMessage('');
@@ -285,17 +354,15 @@ export default function App() {
     isExecuting || (isLiveTransferFlow && stage !== 'confirm') || isPreviewOnlyFlow;
 
   const runPrimaryAction = async () => {
-    setActiveFlowId(detectFlowId(draft));
-
     if (isPreviewOnlyFlow) {
       setStage('preview');
-      setStatusMessage('DeepBook remains preview only in this pass.');
+      setStatusMessage('Preview only — no funds move.');
       return;
     }
 
     if (isBlockedFlow) {
       setStage('blocked');
-      setStatusMessage('Hidden transfer blocked before execution. Funds moved: 0.');
+      setStatusMessage(`${coreFlow.policy.summary} Funds moved: 0.`);
       return;
     }
 
@@ -336,18 +403,15 @@ export default function App() {
     }
   };
 
-  const sessionFields =
-    activeFlowId === 'transitTopUp' && stage === 'executed'
-      ? [
-          { label: 'Session type', value: 'Sui Action Session' },
-          { label: 'Status', value: 'Executed on testnet' },
-          { label: 'Proposed amount', value: '10 USDC' },
-          { label: 'Testnet transfer', value: LIVE_TESTNET_TRANSFER_LABEL },
-        ]
-      : activeFlow.sessionFields;
+  const sessionFields = [
+    { label: 'Session type', value: 'Sui Action Session' },
+    { label: 'Status', value: coreFlow.executionMode },
+    { label: 'Proposed amount', value: coreFlow.preview.kind === 'transfer' ? `${coreFlow.preview.amount} ${coreFlow.preview.token}` : '0' },
+    { label: 'Funds moved', value: String(coreFlow.fundsMoved) },
+  ];
 
   const verifierNote = isBlockedFlow
-    ? `Funds moved: ${sampleScanArtifact.fundsMoved}.`
+    ? `Blocked. Funds moved: ${coreFlow.fundsMoved}.`
     : isLiveTransferFlow && stage === 'executed'
       ? `Testnet transfer complete.`
       : `Funds moved: 0 before confirmation.`;
@@ -414,6 +478,8 @@ export default function App() {
             </button>
           </div>
 
+          <FieldList fields={flowToIntentFields(coreFlow)} />
+
           <p className="panel-note">{statusMessage}</p>
           {speechRecognitionAvailable ? (
             <p className="panel-note">Voice input uses the browser SpeechRecognition API when available.</p>
@@ -424,27 +490,29 @@ export default function App() {
         </Panel>
 
         <Panel title="AI Reads" subtitle="What the agent is proposing.">
-          <FieldList fields={activeFlow.readFields} />
+          <FieldList fields={flowToPreviewFields(coreFlow)} />
         </Panel>
 
         <Panel title="Action Session Verifier" subtitle="Internal verifier path.">
-          <FieldList fields={activeFlow.verifyFields} />
+          <FieldList fields={flowToPolicyFields(coreFlow)} />
+          <FieldList fields={flowToBoundaryFields(coreFlow)} />
           <p className="panel-note">
-            The verifier reads before value moves. DeepBook stays preview only. Transit stays a
-            demo boundary.
+            The core reads before value moves. DeepBook stays preview only. Transit stays a
+            boundary.
           </p>
         </Panel>
 
         <Panel title="Sui Action Session" subtitle="The public session record.">
           <div className="session-emphasis">
-            <div className="status-pill">{activeFlow.sessionStatus}</div>
+            <div className="status-pill">{coreFlow.executionMode}</div>
             <div className="session-value">
               {isLiveTransferFlow && stage === 'executed'
                 ? `Transferred ${LIVE_TESTNET_TRANSFER_LABEL} on testnet`
-                : 'Funds moved: 0'}
+                : `Funds moved: ${coreFlow.fundsMoved}`}
             </div>
           </div>
           <FieldList fields={sessionFields} />
+          <FieldList fields={flowToReceiptFields(coreFlow)} />
           {executionRecord ? (
             <div className="field-list">
               <div className="field-row">
