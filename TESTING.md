@@ -6,7 +6,7 @@ Checklist:
 1. Run `npm install`.
 2. Run `npm run dev`.
 3. Open the app.
-4. Confirm the first-screen demo reads as Miasma Atlas and not the legacy copied app.
+4. Confirm the first-screen demo reads as Hey Sui and not the legacy copied app.
 5. Confirm the quarantine status shows `BLOCKED`.
 6. Confirm the memory path mentions `vendor_policy_v3.txt -> payment_rules.md -> send_usdc`.
 7. Confirm the verifier runs before execution, `proposedAmount` reflects intent, and `fundsMoved` stays `0`.
@@ -17,3 +17,4 @@ Checklist:
 12. Run `npm run build` and confirm the Vite build passes.
 13. Run `sui move build --path move` and confirm the Move package builds.
 14. Confirm the receipt panel is a local scaffold and does not imply an on-chain mint already occurred.
+15. Connect a testnet wallet, use the `Top up` flow, confirm the command, and verify the live testnet transfer shows a transaction digest and explorer link.

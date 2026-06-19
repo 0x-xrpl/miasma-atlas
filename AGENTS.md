@@ -34,7 +34,7 @@ Implement them step by step after the Miasma UI, Rust verifier, and Sui Quaranti
 Main first-screen demo:
 
 - Agent wants to pay 900 USDC
-- Memory path: vendor_policy_v3.txt -> payment_rules.md -> Pay Vendor
+- Memory path: vendor_policy_v3.txt -> payment_rules.md -> send_usdc
 - Hidden instruction contamination detected
 - Action: BLOCKED
 - Funds moved: 0

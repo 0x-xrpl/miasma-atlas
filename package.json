@@ -1,11 +1,11 @@
 {
-  "name": "miasma-atlas",
+  "name": "hey-sui",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json && vite build",
     "preview": "vite preview",
     "move:build": "sui move build --path move"
   },

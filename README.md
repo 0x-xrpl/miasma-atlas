@@ -1,6 +1,6 @@
 <div align="center">
 
-# Miasma Atlas
+# Hey Sui
 
 ### Agentic memory-action firewall for Sui agents
 
@@ -9,7 +9,7 @@ It was poisoned in memory.
 
 **Map. Verify. Block. Funds moved: 0.**
 
-Sui is the settlement and receipt layer for the blocked decision and the public audit trail.
+Sui is the settlement and receipt surface for the blocked decision and the public audit trail.
 
 <img src="https://img.shields.io/static/v1?label=LOCAL_RUST_VERIFIER&message=passing&color=36F7DF&labelColor=0B1114" />
 <img src="https://img.shields.io/static/v1?label=SUI_MOVE_BUILD&message=passing&color=4DA3FF&labelColor=0B1114" />
@@ -81,7 +81,7 @@ Memory path
 
 ## What Miasma is
 
-Miasma Atlas is an agentic memory-action firewall for Sui agents.
+Hey Sui is an agentic memory-action firewall for Sui agents.
 It verifies the memory path that caused an autonomous action before the skill executes.
 If the path is contaminated, Miasma blocks the action, locks evidence, records a receipt, and keeps funds moved at zero.
 
@@ -101,7 +101,7 @@ Miasma is not an intent engine.
 
 ## Architecture
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/FINAL_REQUIREMENTS.md](docs/FINAL_REQUIREMENTS.md) for the layered system view and the public requirements chain.
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/FINAL_REQUIREMENTS.md](docs/FINAL_REQUIREMENTS.md) for the system view and the public requirements chain.
 
 ## Implemented boundaries and verified surfaces
 
@@ -158,6 +158,13 @@ cargo run -- --input fixtures/clean-memory.json
 cd ..
 sui move build --path move
 ```
+
+### Live execution path
+
+- Connect a wallet on testnet.
+- Use the `Top up` flow.
+- Preview, confirm, then execute on Sui.
+- After success, the UI shows the transaction digest and explorer link.
 
 ## Testing
 
