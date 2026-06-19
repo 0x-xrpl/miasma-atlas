@@ -1,23 +1,23 @@
-import { sampleScanArtifact } from './sample-scan-artifact';
+const HIDDEN_TRANSFER_PATH = 'vendor_policy_v3.txt -> payment_rules.md -> send_usdc';
 
-export type MiasmaFlowId = 'transitTopUp' | 'deepBookTrade' | 'hiddenTransferBlock';
+export type HeySuiFlowId = 'transitTopUp' | 'deepBookTrade' | 'hiddenTransferBlock';
 
-export type MiasmaField = {
+export type HeySuiField = {
   label: string;
   value: string;
 };
 
-export type MiasmaFlow = {
-  id: MiasmaFlowId;
+export type HeySuiFlow = {
+  id: HeySuiFlowId;
   tabLabel: string;
   command: string;
-  readFields: readonly MiasmaField[];
-  verifyFields: readonly MiasmaField[];
+  readFields: readonly HeySuiField[];
+  verifyFields: readonly HeySuiField[];
   sessionStatus: string;
-  sessionFields: readonly MiasmaField[];
+  sessionFields: readonly HeySuiField[];
 };
 
-export const miasmaFlows: readonly MiasmaFlow[] = [
+export const heySuiFlows: readonly HeySuiFlow[] = [
   {
     id: 'transitTopUp',
     tabLabel: 'Top up',
@@ -77,31 +77,21 @@ export const miasmaFlows: readonly MiasmaFlow[] = [
       { label: 'Policy', value: 'Policy violation detected' },
     ],
     verifyFields: [
-      { label: 'Path check', value: sampleScanArtifact.memoryPath.join(' -> ') },
+      { label: 'Path check', value: HIDDEN_TRANSFER_PATH },
       { label: 'Policy check', value: 'Policy violation detected' },
-      { label: 'Hidden transfer check', value: sampleScanArtifact.detectorResults[0] },
+      { label: 'Hidden transfer check', value: 'hidden instruction contamination' },
       { label: 'Decision', value: 'Blocked' },
     ],
     sessionStatus: 'Action session blocked',
     sessionFields: [
       { label: 'Session type', value: 'Sui Action Session' },
       { label: 'Status', value: 'Blocked' },
-      { label: 'Proposed amount', value: `${sampleScanArtifact.proposedAmount} USDC` },
-      { label: 'Funds moved', value: `${sampleScanArtifact.fundsMoved}` },
+      { label: 'Proposed amount', value: '900 USDC' },
+      { label: 'Funds moved', value: '0' },
     ],
   },
 ];
 
-export function getMiasmaFlow(flowId: MiasmaFlowId) {
-  return miasmaFlows.find((flow) => flow.id === flowId) ?? miasmaFlows[0];
-}
-
-export type HeySuiFlowId = MiasmaFlowId;
-export type HeySuiField = MiasmaField;
-export type HeySuiFlow = MiasmaFlow;
-
-export const heySuiFlows = miasmaFlows;
-
 export function getHeySuiFlow(flowId: HeySuiFlowId) {
-  return getMiasmaFlow(flowId);
+  return heySuiFlows.find((flow) => flow.id === flowId) ?? heySuiFlows[0];
 }
