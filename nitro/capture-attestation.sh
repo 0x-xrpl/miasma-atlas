@@ -14,5 +14,6 @@ if [ ! -f "$SOURCE_PATH" ]; then
   exit 1
 fi
 
+mkdir -p "$(dirname "$OUTPUT_PATH")"
 cp "$SOURCE_PATH" "$OUTPUT_PATH"
 echo "$OUTPUT_PATH"
