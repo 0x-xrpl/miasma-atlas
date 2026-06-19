@@ -1,6 +1,6 @@
 const zkGroth16Status = {
   "state": "verified",
-  "detail": "ZK verification passed. Proof hash: 8fa1594c65d102c142f16df968ab18f910007c03324788092bea98497f82291a.",
+  "detail": "ZK verification passed. Proof hash: 4c9a46c70c6c667171e0533ffc9684edc0fe449bc0b002bd1f86cd870294b00b.",
   "available": true,
   "assets": {
     "circuit": "zk/circuits/quarantine_threshold.circom",
