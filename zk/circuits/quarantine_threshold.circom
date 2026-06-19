@@ -1,5 +1,3 @@
-pragma circom 2.1.8;
-
 template QuarantineThreshold() {
     signal input blocked;
     signal output allowed;
@@ -7,4 +5,3 @@ template QuarantineThreshold() {
 }
 
 component main = QuarantineThreshold();
-

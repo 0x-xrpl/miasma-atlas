@@ -1,4 +1,13 @@
 import type { BoundaryState, BoundaryStatus } from '../types';
+import zkGroth16Status from './zk-groth16-status';
+
+type ZkGroth16Status = {
+  state: BoundaryState;
+  detail: string;
+  available: boolean;
+};
+
+const proofStatus = zkGroth16Status as ZkGroth16Status;
 
 const DEFAULT_BOUNDARIES: Record<string, BoundaryStatus> = {
   voiceBoundary: {
@@ -45,9 +54,9 @@ const DEFAULT_BOUNDARIES: Record<string, BoundaryStatus> = {
   },
   proofBoundary: {
     name: 'proofBoundary',
-    state: 'preview',
-    detail: 'Proof surface is preview-scoped.',
-    available: false,
+    state: proofStatus.state,
+    detail: proofStatus.detail,
+    available: proofStatus.available,
   },
 };
 

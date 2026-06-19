@@ -7,7 +7,7 @@ export type ActionKind =
 
 export type ExecutionMode = 'preview' | 'confirmed' | 'blocked';
 
-export type BoundaryState = 'implemented' | 'preview' | 'boundary' | 'blocked' | 'unavailable';
+export type BoundaryState = 'implemented' | 'preview' | 'boundary' | 'blocked' | 'unavailable' | 'verified';
 
 export type ParsedIntent = {
   input: string;

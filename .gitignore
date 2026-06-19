@@ -18,3 +18,6 @@ verifier/target/
 # Sui / Move build output
 move/**/build/
 move/**/.sui/
+
+# Local Groth16 build output
+zk/generated/
