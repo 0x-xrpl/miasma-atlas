@@ -9,6 +9,8 @@ import {
   HEY_SUI_NAME,
   HEY_SUI_SCOPE,
   HEY_SUI_TAGLINE,
+  LIVE_DEEPBOOK_BASE_TO_QUOTE_SLIPPAGE_BPS,
+  buildLiveDeepBookSwapTransaction,
   LIVE_TESTNET_TRANSFER_LABEL,
   buildLiveTestnetTransferTransaction,
   buildSuiVisionTxUrl,
@@ -226,7 +228,7 @@ export default function App() {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
   const currentAccount = useCurrentAccount();
-  const { network } = useSuiClientContext();
+  const { client, network } = useSuiClientContext();
   const { mutateAsync: signAndExecuteTransaction, isPending: isExecuting } =
     useSignAndExecuteTransaction();
 
@@ -256,11 +258,13 @@ export default function App() {
     setStatusMessage(
       selectedTabIsBlocked
         ? 'Hidden transfer block selected. Funds moved: 0.'
+        : isDeepBookFlow
+          ? 'DeepBook config present. Preview then confirm to execute.'
         : HEY_SUI_TAGLINE,
     );
     recognitionRef.current?.stop();
     recognitionRef.current = null;
-  }, [activeFlow.command, selectedTabIsBlocked]);
+  }, [activeFlow.command, isDeepBookFlow, selectedTabIsBlocked]);
 
   useEffect(
     () => () => {
@@ -344,9 +348,7 @@ export default function App() {
 
   const primaryActionLabel = isBlockedFlow
     ? 'Block request'
-    : isDeepBookFlow
-      ? 'Production gate failed'
-      : isPreviewOnlyFlow
+    : isPreviewOnlyFlow
       ? 'Preview only'
       : stage === 'executed'
         ? 'Executed'
@@ -354,15 +356,71 @@ export default function App() {
 
   const primaryActionDisabled =
     isExecuting ||
-    (isLiveTransferFlow && stage !== 'confirm') ||
-    isPreviewOnlyFlow ||
-    isDeepBookFlow;
+    ((isLiveTransferFlow || isDeepBookFlow) && stage !== 'confirm') ||
+    isPreviewOnlyFlow;
 
   const runPrimaryAction = async () => {
+    if (isDeepBookFlow && stage !== 'confirm') {
+      setStage('preview');
+      setStatusMessage('Preview DeepBook only. Confirm to execute.');
+      return;
+    }
+
     if (isDeepBookFlow) {
-      setStage('blocked');
-      setStatusMessage('PRODUCTION GATE FAILED: DeepBook live SDK/client not configured.');
-      setErrorMessage('DeepBook live SDK/client not configured.');
+      if (!currentAccount) {
+        setStage('confirm');
+        setStatusMessage('Connect a wallet to execute the DeepBook transaction.');
+        return;
+      }
+
+      if (network !== 'testnet') {
+        setStage('confirm');
+        setStatusMessage('Switch the wallet network to testnet to execute the DeepBook transaction.');
+        setErrorMessage(`Current network: ${String(network)}.`);
+        return;
+      }
+
+      try {
+        setStage('confirm');
+        setStatusMessage('DeepBook config present. Building transaction.');
+        setErrorMessage('');
+
+        const deepbookPreview = coreFlow.preview.kind === 'deepbook_swap' ? coreFlow.preview : null;
+        if (!deepbookPreview) {
+          throw new Error('PRODUCTION GATE FAILED: DeepBook config missing.');
+        }
+
+        const transaction = buildLiveDeepBookSwapTransaction({
+          client,
+          senderAddress: currentAccount.address,
+          amountIn: deepbookPreview.amountIn,
+          estimatedOutput: deepbookPreview.estimatedOutput,
+          network: network as 'mainnet' | 'testnet' | 'devnet',
+          slippageBps: deepbookPreview.slippageBps || LIVE_DEEPBOOK_BASE_TO_QUOTE_SLIPPAGE_BPS,
+        });
+        setStatusMessage('DeepBook transaction built. Wallet signature requested.');
+
+        const result = await signAndExecuteTransaction({ transaction });
+        const digest = result.digest;
+        const explorerUrl = buildSuiVisionTxUrl(
+          digest,
+          network as 'mainnet' | 'testnet' | 'devnet',
+        );
+
+        setExecutionRecord({ digest, explorerUrl });
+        setStage('executed');
+        setStatusMessage(`Executed on Sui testnet. Digest: ${shortDigest(digest)}`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Execution failed.';
+        const deepBookConfigFailure = /config missing|resource not found|pool/i.test(message);
+        const failureMessage =
+          message.includes('PRODUCTION GATE FAILED') || deepBookConfigFailure
+            ? 'PRODUCTION GATE FAILED: DeepBook config missing.'
+            : 'DeepBook execution failed.';
+        setErrorMessage(failureMessage);
+        setStage('confirm');
+        setStatusMessage(failureMessage);
+      }
       return;
     }
 
@@ -509,8 +567,8 @@ export default function App() {
           <FieldList fields={flowToPolicyFields(coreFlow)} />
           <FieldList fields={flowToBoundaryFields(coreFlow)} />
           <p className="panel-note">
-            The core reads before value moves. DeepBook live execution is not configured. Transit
-            stays a boundary.
+            The core reads before value moves. DeepBook is live on testnet when the wallet is
+            confirmed. Transit stays a boundary.
           </p>
         </Panel>
 
