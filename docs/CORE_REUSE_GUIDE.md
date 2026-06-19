@@ -31,3 +31,4 @@ Only add a new branch when a real behavior differs.
 ## Safe default
 
 If an intent is unclear or a required slot is missing, the core must fail safe and keep `fundsMoved` at `0`.
+Missing confirmation stays preview / confirmation-required, not blocked.

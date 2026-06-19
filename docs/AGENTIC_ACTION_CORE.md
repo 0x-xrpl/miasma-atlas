@@ -10,7 +10,7 @@ This repository keeps one reusable action core inside `src/core`.
 4. Build a safe preview.
 5. Evaluate policy.
 6. Return blocked output if unsafe.
-7. Return preview output if not explicitly confirmed.
+7. Return preview or confirmation-required output if not explicitly confirmed.
 8. Map to a Sui action object only when the flow is confirmed and safe.
 9. Create a receipt preview.
 
@@ -39,8 +39,8 @@ This repository keeps one reusable action core inside `src/core`.
 
 ## Funds moved
 
-`fundsMoved` stays `0` until an explicit confirmed execution path is actually wired.
-Blocked results also keep `fundsMoved` at `0`.
+`fundsMoved` stays `0` in preview, confirmation-required, and blocked results.
+Real execution still requires explicit confirmation plus real safe wallet/client plumbing.
 
 ## Boundary map
 
