@@ -6,7 +6,7 @@ export type ParseIntentOptions = {
 };
 
 const AMOUNT_TOKEN = /(\d+(?:\.\d+)?)\s*(SUI|USDC|MIST|mist)?/i;
-const ADDRESS_TOKEN = /0x[a-f0-9]{4,}/i;
+const ADDRESS_TOKEN = /0x[a-f0-9]{3,}/i;
 
 function normalize(text: string) {
   return text.trim().replace(/\s+/g, ' ');
@@ -38,7 +38,7 @@ function parseRecipient(text: string, demoRecipientAddress: string) {
     return demoRecipientAddress;
   }
 
-  const directMatch = text.match(/(?:to|for|へ|に)\s+(0x[a-f0-9]{4,}|[A-Za-z][\w.-]*)/i);
+  const directMatch = text.match(/(?:to|for|へ|に)\s+(0x[a-f0-9]{3,}|[A-Za-z][\w.-]*)/i);
   if (directMatch?.[1]) {
     return directMatch[1];
   }
