@@ -78,6 +78,7 @@ export type PolicyResult = {
   allowed: boolean;
   blocked: boolean;
   requiresConfirmation: boolean;
+  confirmationRequired: boolean;
   reasons: string[];
   summary: string;
 };

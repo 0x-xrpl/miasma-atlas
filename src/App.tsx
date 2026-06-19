@@ -191,7 +191,7 @@ function flowToPolicyFields(flow: FlowResult) {
     { label: 'Rule', value: flow.policy.ruleId },
     { label: 'Allowed', value: flow.policy.allowed ? 'Yes' : 'No' },
     { label: 'Blocked', value: flow.policy.blocked ? 'Yes' : 'No' },
-    { label: 'Needs confirmation', value: flow.policy.requiresConfirmation ? 'Yes' : 'No' },
+    { label: 'Confirmation required', value: flow.policy.confirmationRequired ? 'Yes' : 'No' },
     { label: 'Summary', value: flow.policy.summary },
     { label: 'Reasons', value: flow.policy.reasons.join(' | ') || 'None' },
   ];

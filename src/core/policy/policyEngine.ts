@@ -54,15 +54,12 @@ export function evaluatePolicy(
   const blocked = reasons.length > 0;
   const requiresConfirmation = !blocked && preview.kind !== 'balance_check' && options.confirmed !== true;
 
-  if (options.confirmed !== true && !blocked && preview.kind !== 'balance_check') {
-    reasons.push('Missing explicit confirmation for execution.');
-  }
-
   return {
     ruleId: blocked ? 'policy_block_v1' : 'policy_preview_v1',
     allowed: !blocked,
     blocked,
     requiresConfirmation,
+    confirmationRequired: requiresConfirmation,
     reasons,
     summary: blocked
       ? reasons[0] ?? 'Blocked.'
