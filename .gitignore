@@ -21,3 +21,5 @@ move/**/.sui/
 
 # Local Groth16 build output
 zk/generated/
+
+artifacts/
