@@ -17,12 +17,30 @@ import {
 } from './sui';
 import { runAgenticActionFlow, type FlowResult } from './core';
 import { getHeySuiFlow, heySuiFlows, type HeySuiFlowId } from './lib/hey-sui/flows';
+import {
+  buildEvidenceCapsuleFields,
+  createEvidenceCapsule,
+  sha256Hex,
+  stableStringify,
+  type EvidenceCapsule,
+} from './lib/hey-sui/evidence-capsule';
+import { sampleQuarantineReceipt } from './lib/miasma/sample-quarantine-receipt';
+import { sampleScanArtifact } from './lib/miasma/sample-scan-artifact';
+import capsuleAnchorStatus from './core/boundaries/capsule-anchor-status';
+import sealEvidenceStatus from './core/boundaries/seal-evidence-status';
+import walrusEvidenceStatus from './core/boundaries/walrus-evidence-status';
+import zkGroth16Status from './core/boundaries/zk-groth16-status';
 
 type Stage = 'idle' | 'listening' | 'intent_detected' | 'preview' | 'confirm' | 'executed' | 'blocked';
 
 type ExecutionRecord = {
   digest: string;
   explorerUrl: string;
+};
+
+type ZkGroth16Status = typeof zkGroth16Status & {
+  proofHash?: string;
+  publicSignalsHash?: string;
 };
 
 const STAGE_LABELS: Record<Stage, string> = {
@@ -218,6 +236,11 @@ function flowToReceiptFields(flow: FlowResult) {
   ];
 }
 
+function parseProofHash(detail: string) {
+  const match = detail.match(/Proof hash:\s*([a-f0-9]+)/i);
+  return match?.[1] ?? '';
+}
+
 function nitroStatusFields() {
   return [
     { label: 'Status', value: 'TEE ATTESTATION GATE' },
@@ -234,6 +257,7 @@ export default function App() {
   const [stage, setStage] = useState<Stage>('idle');
   const [statusMessage, setStatusMessage] = useState(HEY_SUI_TAGLINE);
   const [executionRecord, setExecutionRecord] = useState<ExecutionRecord | null>(null);
+  const [evidenceCapsule, setEvidenceCapsule] = useState<EvidenceCapsule | null>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
@@ -259,6 +283,77 @@ export default function App() {
     coreFlow.intent.kind === 'transit' ||
     coreFlow.intent.kind === 'balance_check';
   const isBlockedFlow = coreFlow.policy.blocked;
+  const zkStatus = zkGroth16Status as ZkGroth16Status;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const proofHash = zkStatus.proofHash ?? parseProofHash(zkStatus.detail);
+      const publicSignalsHash = zkStatus.publicSignalsHash ?? '';
+
+      const capsule = await createEvidenceCapsule({
+        capsuleId: sampleQuarantineReceipt.receiptId,
+        actionKind: sampleQuarantineReceipt.decision === 'blocked' ? 'transfer' : 'unknown',
+        intentHash: await sha256Hex(stableStringify(sampleScanArtifact.memoryPath)),
+        policyHash: await sha256Hex(
+          stableStringify({
+            decision: sampleQuarantineReceipt.decision,
+            recommendation: sampleQuarantineReceipt.recommendation,
+            contaminationScore: sampleQuarantineReceipt.contaminationScore,
+          }),
+        ),
+        contextHash: await sha256Hex(
+          stableStringify({
+            memoryHash: sampleQuarantineReceipt.memoryHash,
+            proposedAmount: sampleQuarantineReceipt.proposedAmount,
+            blocked: sampleQuarantineReceipt.decision === 'blocked',
+          }),
+        ),
+        memoryActionContextHash: await sha256Hex(stableStringify(sampleScanArtifact)),
+        suiDigest: executionRecord?.digest,
+        deepbookDigest: isDeepBookFlow ? executionRecord?.digest : undefined,
+        proofHash,
+        publicSignalsHash,
+        verificationState:
+          zkStatus.state === 'verified'
+            ? 'verified'
+            : zkStatus.state === 'blocked'
+              ? 'blocked'
+              : 'gate_failed',
+        fundsMoved: sampleQuarantineReceipt.fundsMoved,
+        blocked: sampleQuarantineReceipt.decision === 'blocked',
+        confirmationRequired: true,
+        walrusBlobId: walrusEvidenceStatus.blobId,
+        walrusObjectId: walrusEvidenceStatus.objectId,
+        walrusStatus: walrusEvidenceStatus.state,
+        sealPolicyId: sealEvidenceStatus.policyId,
+        sealStatus: sealEvidenceStatus.state,
+        sealCiphertextHash: sealEvidenceStatus.ciphertextHash,
+        createdAtMs: Date.now(),
+      });
+
+      if (!cancelled) {
+        setEvidenceCapsule(capsule);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    executionRecord?.digest,
+    isDeepBookFlow,
+    sampleQuarantineReceipt.contaminationScore,
+    sampleQuarantineReceipt.decision,
+    sampleQuarantineReceipt.fundsMoved,
+    sampleQuarantineReceipt.memoryHash,
+    sampleQuarantineReceipt.proposedAmount,
+    zkStatus.detail,
+    zkStatus.publicSignalsHash,
+    zkStatus.proofHash,
+    zkStatus.state,
+  ]);
 
   useEffect(() => {
     setDraft(activeFlow.command);
@@ -490,6 +585,26 @@ export default function App() {
     { label: 'Funds moved', value: String(coreFlow.fundsMoved) },
   ];
 
+  const evidenceCapsuleFields = evidenceCapsule
+    ? buildEvidenceCapsuleFields(evidenceCapsule, {
+        deepbookDigest:
+          isDeepBookFlow && executionRecord?.digest ? shortDigest(executionRecord.digest) : undefined,
+        suiDigest: executionRecord?.digest ? shortDigest(executionRecord.digest) : undefined,
+        walrusArtifact:
+          walrusEvidenceStatus.available && walrusEvidenceStatus.blobId && walrusEvidenceStatus.objectId
+            ? `${shortDigest(walrusEvidenceStatus.blobId)} / ${shortDigest(walrusEvidenceStatus.objectId)}`
+            : undefined,
+        sealAccessPolicy:
+          sealEvidenceStatus.available && sealEvidenceStatus.policyId
+            ? shortDigest(sealEvidenceStatus.policyId)
+            : undefined,
+        suiCapsuleAnchor:
+          capsuleAnchorStatus.available && capsuleAnchorStatus.digest
+            ? shortDigest(capsuleAnchorStatus.digest)
+            : undefined,
+      })
+    : [];
+
   const verifierNote = isBlockedFlow
     ? `Blocked. Funds moved: ${coreFlow.fundsMoved}.`
     : isLiveTransferFlow && stage === 'executed'
@@ -612,6 +727,14 @@ export default function App() {
               </a>
             </div>
           ) : null}
+        </Panel>
+
+        <Panel title="Verified Evidence Capsule" subtitle="Proof, evidence, and anchor chain.">
+          <FieldList fields={evidenceCapsuleFields} />
+          <p className="panel-note">
+            The capsule chain keeps the blocked path auditable without claiming any fake Walrus,
+            Seal, or Sui anchor success.
+          </p>
         </Panel>
       </section>
     </main>

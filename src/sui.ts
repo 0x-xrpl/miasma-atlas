@@ -1,5 +1,6 @@
 import { DeepBookClient } from '@mysten/deepbook-v3';
 import { Transaction } from '@mysten/sui/transactions';
+import type { EvidenceCapsule } from './lib/hey-sui/evidence-capsule';
 
 export const HEY_SUI_NAME = 'Hey Sui';
 export const HEY_SUI_TAGLINE = 'Say it or type it. Hey Sui reads before value moves.';
@@ -59,4 +60,46 @@ export function buildSuiVisionTxUrl(
   network: 'mainnet' | 'testnet' | 'devnet' = DEFAULT_NETWORK,
 ) {
   return `https://suivision.xyz/txblock/${digest}?network=${network}`;
+}
+
+export function buildEvidenceCapsuleAnchorTransaction({
+  packageId,
+  capsule,
+}: {
+  packageId: string;
+  capsule: EvidenceCapsule;
+}) {
+  const transaction = new Transaction();
+  const encoder = new TextEncoder();
+  const bytes = (value: string) => transaction.pure.vector('u8', encoder.encode(value));
+
+  transaction.moveCall({
+    target: `${packageId}::evidence_capsule::create_evidence_capsule`,
+    arguments: [
+      bytes(capsule.capsuleId),
+      bytes(capsule.capsuleHash),
+      bytes(capsule.actionKind),
+      bytes(capsule.intentHash),
+      bytes(capsule.policyHash),
+      bytes(capsule.contextHash),
+      bytes(capsule.memoryActionContextHash),
+      bytes(capsule.suiDigest ?? ''),
+      bytes(capsule.deepbookDigest ?? ''),
+      bytes(capsule.proofHash),
+      bytes(capsule.publicSignalsHash),
+      bytes(capsule.verificationState),
+      transaction.pure.u64(capsule.fundsMoved),
+      transaction.pure.bool(capsule.blocked),
+      transaction.pure.bool(capsule.confirmationRequired),
+      bytes(capsule.walrusBlobId ?? ''),
+      bytes(capsule.walrusObjectId ?? ''),
+      bytes(capsule.walrusStatus),
+      bytes(capsule.sealPolicyId ?? ''),
+      bytes(capsule.sealStatus),
+      bytes(capsule.sealCiphertextHash ?? ''),
+      transaction.pure.u64(capsule.createdAtMs),
+    ],
+  });
+
+  return transaction;
 }

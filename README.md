@@ -61,6 +61,7 @@ The proposed payment remains proposed only.
 | Sui transfer | live |
 | DeepBook testnet execution | live |
 | Groth16 prove + verify | live locally |
+| Verified Evidence Capsule chain | implemented, gated by Walrus, Seal, and Sui capsule config |
 | Nitro/TEE capture + verify path | implemented, requires a real AWS Nitro attestation document |
 | Walrus / Seal | not claimed live |
 
