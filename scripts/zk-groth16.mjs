@@ -31,6 +31,7 @@ const zkeyFinalPath = path.join(generatedRoot, `${circuitName}.final.zkey`);
 const verificationKeyPath = path.join(generatedRoot, `${circuitName}.verification_key.json`);
 const proofPath = path.join(generatedRoot, `${circuitName}.proof.json`);
 const publicSignalsPath = path.join(generatedRoot, `${circuitName}.public.json`);
+const statusJsonPath = path.join(generatedRoot, `${circuitName}.status.json`);
 
 function usage() {
   console.error('Usage: node scripts/zk-groth16.mjs <build|prove|verify>');
@@ -81,11 +82,12 @@ function fileHash(filePath) {
   return hash.digest('hex');
 }
 
-function writeProofStatus(state, detail) {
+function writeProofStatus(state, detail, extra = {}) {
   const payload = {
     state,
     detail,
     available: state !== 'unavailable',
+    ...extra,
     assets: {
       circuit: path.relative(repoRoot, circuitSource),
       r1cs: path.relative(repoRoot, circuitR1csPath),
@@ -103,6 +105,7 @@ function writeProofStatus(state, detail) {
     proofStatusPath,
     `const zkGroth16Status = ${JSON.stringify(payload, null, 2)} as const;\n\nexport default zkGroth16Status;\n`,
   );
+  fs.writeFileSync(statusJsonPath, `${JSON.stringify(payload, null, 2)}\n`);
 }
 
 function build() {
@@ -139,7 +142,10 @@ function prove() {
   run(snarkjsBin, ['groth16', 'verify', verificationKeyPath, publicSignalsPath, proofPath]);
 
   const proofHash = fileHash(proofPath);
-  writeProofStatus('verified', `ZK verification passed. Proof hash: ${proofHash}.`);
+  writeProofStatus('verified', `ZK verification passed. Proof hash: ${proofHash}.`, {
+    proofHash,
+    publicSignalsHash: fileHash(publicSignalsPath),
+  });
   console.log('ZK proof generated and verified.');
 }
 
@@ -153,7 +159,10 @@ function verify() {
   run(snarkjsBin, ['groth16', 'verify', verificationKeyPath, publicSignalsPath, proofPath]);
 
   const proofHash = fileHash(proofPath);
-  writeProofStatus('verified', `ZK verification passed. Proof hash: ${proofHash}.`);
+  writeProofStatus('verified', `ZK verification passed. Proof hash: ${proofHash}.`, {
+    proofHash,
+    publicSignalsHash: fileHash(publicSignalsPath),
+  });
   console.log('ZK verification passed.');
 }
 
