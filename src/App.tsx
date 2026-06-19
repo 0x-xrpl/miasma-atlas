@@ -240,10 +240,10 @@ export default function App() {
   );
   const activeFlow = getHeySuiFlow(activeFlowId);
   const speechRecognitionAvailable = Boolean(getSpeechRecognitionConstructor());
+  const isDeepBookFlow = coreFlow.intent.kind === 'deepbook_swap';
   const selectedTabIsBlocked = activeFlowId === 'hiddenTransferBlock';
   const isLiveTransferFlow = coreFlow.intent.kind === 'transfer';
   const isPreviewOnlyFlow =
-    coreFlow.intent.kind === 'deepbook_swap' ||
     coreFlow.intent.kind === 'transit' ||
     coreFlow.intent.kind === 'balance_check';
   const isBlockedFlow = coreFlow.policy.blocked;
@@ -344,16 +344,28 @@ export default function App() {
 
   const primaryActionLabel = isBlockedFlow
     ? 'Block request'
-    : isPreviewOnlyFlow
+    : isDeepBookFlow
+      ? 'Production gate failed'
+      : isPreviewOnlyFlow
       ? 'Preview only'
       : stage === 'executed'
         ? 'Executed'
         : 'Execute on Sui';
 
   const primaryActionDisabled =
-    isExecuting || (isLiveTransferFlow && stage !== 'confirm') || isPreviewOnlyFlow;
+    isExecuting ||
+    (isLiveTransferFlow && stage !== 'confirm') ||
+    isPreviewOnlyFlow ||
+    isDeepBookFlow;
 
   const runPrimaryAction = async () => {
+    if (isDeepBookFlow) {
+      setStage('blocked');
+      setStatusMessage('PRODUCTION GATE FAILED: DeepBook live SDK/client not configured.');
+      setErrorMessage('DeepBook live SDK/client not configured.');
+      return;
+    }
+
     if (isPreviewOnlyFlow) {
       setStage('preview');
       setStatusMessage('Preview only — no funds move.');
@@ -497,8 +509,8 @@ export default function App() {
           <FieldList fields={flowToPolicyFields(coreFlow)} />
           <FieldList fields={flowToBoundaryFields(coreFlow)} />
           <p className="panel-note">
-            The core reads before value moves. DeepBook stays preview only. Transit stays a
-            boundary.
+            The core reads before value moves. DeepBook live execution is not configured. Transit
+            stays a boundary.
           </p>
         </Panel>
 
