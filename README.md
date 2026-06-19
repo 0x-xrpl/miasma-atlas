@@ -54,6 +54,16 @@ The proposed payment remains proposed only.
 
 **Funds moved: 0.**
 
+## Production status
+
+| Surface | Status |
+|---|---|
+| Sui transfer | live |
+| DeepBook testnet execution | live |
+| Groth16 prove + verify | live locally |
+| Nitro/TEE capture + verify path | implemented, requires a real AWS Nitro attestation document |
+| Walrus / Seal | not claimed live |
+
 ## Proof chain
 
 ```txt
@@ -165,6 +175,11 @@ sui move build --path move
 - Use the `Top up` flow.
 - Preview, confirm, then execute on Sui.
 - After success, the UI shows the transaction digest and explorer link.
+
+### Nitro / TEE
+
+- `npm run tee:capture` expects a real Nitro runtime output path.
+- `npm run tee:verify` fails closed until a real attestation document and expected PCRs are supplied.
 
 ## Testing
 

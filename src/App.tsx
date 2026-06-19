@@ -218,6 +218,16 @@ function flowToReceiptFields(flow: FlowResult) {
   ];
 }
 
+function nitroStatusFields() {
+  return [
+    { label: 'Status', value: 'TEE ATTESTATION GATE' },
+    { label: 'State', value: 'PRODUCTION GATE FAILED' },
+    { label: 'Detail', value: 'Nitro attestation document not configured' },
+    { label: 'Command', value: 'npm run tee:verify' },
+    { label: 'Fake attestation', value: 'Rejected' },
+  ];
+}
+
 export default function App() {
   const [activeFlowId, setActiveFlowId] = useState<HeySuiFlowId>('transitTopUp');
   const [draft, setDraft] = useState(() => heySuiFlows[0].command);
@@ -569,6 +579,14 @@ export default function App() {
           <p className="panel-note">
             The core reads before value moves. DeepBook is live on testnet when the wallet is
             confirmed. Transit stays a boundary.
+          </p>
+        </Panel>
+
+        <Panel title="Nitro / TEE" subtitle="Attestation gate.">
+          <FieldList fields={nitroStatusFields()} />
+          <p className="panel-note">
+            Capture and verification are implemented. The gate only turns verified when a real
+            Nitro attestation document and expected PCRs are supplied.
           </p>
         </Panel>
 

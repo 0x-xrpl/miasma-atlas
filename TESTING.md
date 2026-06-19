@@ -18,3 +18,15 @@ Checklist:
 13. Run `sui move build --path move` and confirm the Move package builds.
 14. Confirm the receipt panel is a local scaffold and does not imply an on-chain mint already occurred.
 15. Connect a testnet wallet, use the `Top up` flow, confirm the command, and verify the live testnet transfer shows a transaction digest and explorer link.
+16. Run `npm run tee:capture` with a real Nitro runtime output path and confirm it only succeeds with a real attestation document source.
+17. Run `npm run tee:verify` with a real attestation document path and expected PCR JSON and confirm it only reports verified when the real document matches.
+
+Production status:
+
+| Surface | Status |
+|---|---|
+| Sui transfer | live |
+| DeepBook testnet execution | live |
+| Groth16 prove + verify | live locally |
+| Nitro/TEE capture + verify path | implemented, requires a real AWS Nitro attestation document |
+| Walrus / Seal | not claimed live |
