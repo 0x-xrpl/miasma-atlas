@@ -118,10 +118,10 @@ function build() {
   fs.renameSync(path.join(repoRoot, `${circuitName}.wasm`), circuitWasmPath);
   fs.renameSync(path.join(repoRoot, `${circuitName}.sym`), circuitSymPath);
   run(snarkjsBin, ['powersoftau', 'new', 'bn128', '4', pot0Path, '-v']);
-  run(snarkjsBin, ['powersoftau', 'contribute', pot0Path, pot1Path], 'hey-sui-zk-build\n');
+  run(snarkjsBin, ['powersoftau', 'contribute', pot0Path, pot1Path], 'miasma-zk-build\n');
   run(snarkjsBin, ['powersoftau', 'prepare', 'phase2', pot1Path, potFinalPath, '-v']);
   run(snarkjsBin, ['groth16', 'setup', circuitR1csPath, potFinalPath, zkey0Path]);
-  run(snarkjsBin, ['zkey', 'contribute', zkey0Path, zkeyFinalPath], 'hey-sui-zk-build\n');
+  run(snarkjsBin, ['zkey', 'contribute', zkey0Path, zkeyFinalPath], 'miasma-zk-build\n');
   run(snarkjsBin, ['zkey', 'export', 'verificationkey', zkeyFinalPath, verificationKeyPath]);
 
   writeProofStatus('unavailable', 'ZK/Groth16 proving assets are built. Run npm run zk:prove to generate a verified proof.');

@@ -16,14 +16,14 @@ import {
   buildSuiVisionTxUrl,
 } from './sui';
 import { runAgenticActionFlow, type FlowResult } from './core';
-import { getHeySuiFlow, heySuiFlows, type HeySuiFlowId } from './lib/hey-sui/flows';
+import { getHeySuiFlow, heySuiFlows, type HeySuiFlowId } from './lib/miasma/flows';
 import {
   buildEvidenceCapsuleFields,
   createEvidenceCapsule,
   sha256Hex,
   stableStringify,
   type EvidenceCapsule,
-} from './lib/hey-sui/evidence-capsule';
+} from './lib/miasma/evidence-capsule';
 import { sampleQuarantineReceipt } from './lib/miasma/sample-quarantine-receipt';
 import { sampleScanArtifact } from './lib/miasma/sample-scan-artifact';
 import capsuleAnchorStatus from './core/boundaries/capsule-anchor-status';

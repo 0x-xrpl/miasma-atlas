@@ -7,7 +7,7 @@ import assert from 'node:assert/strict';
 
 const repoRoot = new URL('..', import.meta.url).pathname;
 const tsc = join(repoRoot, 'node_modules', '.bin', 'tsc');
-const outDir = mkdtempSync(join(tmpdir(), 'hey-sui-core-smoke-'));
+const outDir = mkdtempSync(join(tmpdir(), 'miasma-core-smoke-'));
 
 try {
   execFileSync(

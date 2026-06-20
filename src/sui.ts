@@ -1,6 +1,6 @@
 import { DeepBookClient } from '@mysten/deepbook-v3';
 import { Transaction } from '@mysten/sui/transactions';
-import type { EvidenceCapsule } from './lib/hey-sui/evidence-capsule';
+import type { EvidenceCapsule } from './lib/miasma/evidence-capsule';
 
 export const HEY_SUI_NAME = 'MIASMA';
 export const HEY_SUI_TAGLINE = 'Pre-execution memory-action quarantine for agentic Sui actions.';
