@@ -83,7 +83,7 @@ function FlowSelector({
   onSelect: (flowId: HeySuiFlowId) => void;
 }) {
   return (
-    <div className="flow-tabs" role="tablist" aria-label="Hey Sui flows">
+    <div className="flow-tabs" role="tablist" aria-label="MIASMA flows">
       {heySuiFlows.map((flow) => (
         <button
           key={flow.id}
@@ -627,7 +627,7 @@ export default function App() {
 
       <FlowSelector activeFlowId={activeFlowId} onSelect={setActiveFlowId} />
 
-      <section className="wireframe-grid" aria-label="Hey Sui flow wireframe">
+      <section className="wireframe-grid" aria-label="MIASMA flow wireframe">
         <Panel title="Input" subtitle="Say it or type it." className="input-panel">
           <textarea
             ref={textareaRef}

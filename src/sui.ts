@@ -2,9 +2,9 @@ import { DeepBookClient } from '@mysten/deepbook-v3';
 import { Transaction } from '@mysten/sui/transactions';
 import type { EvidenceCapsule } from './lib/hey-sui/evidence-capsule';
 
-export const HEY_SUI_NAME = 'Hey Sui';
-export const HEY_SUI_TAGLINE = 'Say it or type it. Hey Sui reads before value moves.';
-export const HEY_SUI_SCOPE = 'Top up. Trade. Block.';
+export const HEY_SUI_NAME = 'MIASMA';
+export const HEY_SUI_TAGLINE = 'Pre-execution memory-action quarantine for agentic Sui actions.';
+export const HEY_SUI_SCOPE = 'Block. Verify. Proceed.';
 export const DEFAULT_NETWORK = (import.meta.env.VITE_SUI_NETWORK || 'testnet') as
   | 'mainnet'
   | 'testnet'

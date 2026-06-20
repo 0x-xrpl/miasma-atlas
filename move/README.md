@@ -1,4 +1,4 @@
-# Miasma Move Package
+# MIASMA Move Package
 
 This package defines the minimal on-chain `QuarantineReceipt` object for pre-execution quarantine decisions.
 

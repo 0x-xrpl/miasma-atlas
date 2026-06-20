@@ -1,6 +1,6 @@
 # Threat Model
 
-Miasma Atlas focuses on pre-execution memory-action quarantine for agent skills.
+MIASMA focuses on pre-execution memory-action quarantine for agent skills.
 
 This threat model complements [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md) and keeps the public documentation aligned with the runtime semantics.
 

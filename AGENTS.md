@@ -1,10 +1,10 @@
-# Miasma Atlas Coding Rules
+# MIASMA Coding Rules
 
-Miasma Atlas is the only project focus.
+MIASMA is the only project focus.
 
-Miasma Atlas is an Agentic Web memory-action quarantine protocol.
+MIASMA is an Agentic Web memory-action quarantine protocol.
 
-Before an AI agent uses a skill or moves money, Miasma maps the memory path that caused the action, verifies the path, locks sensitive evidence, and blocks poisoned execution before funds move.
+Before an AI agent uses a skill or moves money, MIASMA maps the memory path that caused the action, verifies the path, locks sensitive evidence, and blocks poisoned execution before funds move.
 
 Always optimize for:
 
@@ -25,11 +25,11 @@ Never copy external reference logos.
 Never import anything from `reference/` or any previous seed project archive.
 Never use reference material at runtime.
 Never make the final app look like Shell, Audric, NVRAM, Remora, or any other project.
-Use benchmark concepts only as strategic inspiration already reflected in the Miasma architecture.
+Use benchmark concepts only as strategic inspiration already reflected in the MIASMA architecture.
 
 Do not make AWS, Nitro, Seal, Walrus, Groth16, Enoki, or MCP mandatory for the first local UI boot.
 Scaffold them cleanly first.
-Implement them step by step after the Miasma UI, Rust verifier, and Sui QuarantineReceipt path are stable.
+Implement them step by step after the MIASMA UI, Rust verifier, and Sui QuarantineReceipt path are stable.
 
 Main first-screen demo:
 
@@ -40,10 +40,10 @@ Main first-screen demo:
 - Funds moved: 0
 - Verified path: Memory hash -> Rust verifier -> Nitro enclave verifier -> Seal locked evidence -> Walrus artifact ref -> Groth16 quarantine proof -> Sui QuarantineReceipt
 
-Miasma is not:
+MIASMA is not:
 
-- chat wallet
-- AI payment assistant
+- generic wallet UI
+- generic payment assistant
 - Audric clone
 - generic AI wallet
 - generic risk dashboard
@@ -54,7 +54,7 @@ Miasma is not:
 - model validator network
 - place memory app
 
-Miasma is:
+MIASMA is:
 
 - AI memory-action quarantine protocol
 - agent skill execution firewall

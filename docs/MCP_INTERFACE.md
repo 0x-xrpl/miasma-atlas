@@ -1,6 +1,6 @@
 # MCP Interface
 
-This document describes the intended MCP surface for Miasma Atlas. It is an interface boundary, not a server implementation.
+This document describes the intended MCP surface for MIASMA. It is an interface boundary, not a server implementation.
 
 ## Intended tools
 

@@ -1,8 +1,8 @@
-# Miasma Atlas Final Product Requirements
+# MIASMA Final Product Requirements
 
 ## 1. Product Core
 
-Miasma Atlas is an agentic memory-action firewall for Sui agents.
+MIASMA is an agentic memory-action firewall for Sui agents.
 
 It verifies the memory path that caused an autonomous action before the skill executes.
 If the path is contaminated, Miasma blocks the action, locks evidence, records a receipt, and keeps funds moved at zero.
@@ -158,7 +158,7 @@ Required visual hierarchy:
 - `Funds moved: 0`
 - `BLOCKED`
 - poisoned memory-action path
-- Miasma Atlas map
+- MIASMA map
 - proof chain
 - Sui QuarantineReceipt and implemented extension surfaces
 

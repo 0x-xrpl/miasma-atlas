@@ -20,7 +20,7 @@ UI stays product-specific. The core stays reusable.
 
 ## Reuse rule
 
-Hey Sui and future Miasma-style flows should call the same parser, policy engine, preview builders, boundary objects, and receipt builders.
+MIASMA and future Miasma-style flows should call the same parser, policy engine, preview builders, boundary objects, and receipt builders.
 Do not duplicate those paths in product-specific code.
 
 ## Extending the core

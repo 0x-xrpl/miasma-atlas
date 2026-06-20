@@ -9,7 +9,7 @@ It was poisoned in memory.
 
 ## 1. Show the UI
 
-- Open the Miasma Atlas screen.
+- Open the MIASMA screen.
 - Point out the map-first layout.
 - Read the first-screen story:
   - Agent wants to pay 900 USDC
@@ -50,7 +50,7 @@ It was poisoned in memory.
 
 ## 6. Close
 
-This is not a chat wallet.
+This is not a generic wallet UI.
 This is not a generic dashboard.
 This is an agentic memory-action firewall.
 

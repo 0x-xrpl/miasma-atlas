@@ -1,6 +1,6 @@
-# Miasma Atlas Architecture
+# MIASMA Architecture
 
-Miasma Atlas is an agentic memory-action firewall for Sui agents. It verifies the memory path that caused an agent action before the skill executes. If the path is poisoned, Miasma blocks the action, locks evidence, records a receipt, and keeps funds moved at `0`.
+MIASMA is an agentic memory-action firewall for Sui agents. It verifies the memory path that caused an agent action before the skill executes. If the path is poisoned, Miasma blocks the action, locks evidence, records a receipt, and keeps funds moved at `0`.
 
 For the public requirements, evaluation language, and visual hierarchy, see [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md).
 

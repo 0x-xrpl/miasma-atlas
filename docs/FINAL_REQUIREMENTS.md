@@ -1,8 +1,8 @@
-# Miasma Atlas Final Requirements
+# MIASMA Final Requirements
 
 ## Product Requirements
 
-Miasma Atlas is an agentic memory-action firewall for Sui agents.
+MIASMA is an agentic memory-action firewall for Sui agents.
 
 It verifies the memory path that caused an autonomous action before the skill executes.
 
@@ -14,7 +14,7 @@ It was poisoned in memory.
 Map. Verify. Block.
 Funds moved: 0.
 
-Miasma Atlas is the firewall between poisoned memory and real agent action.
+MIASMA is the firewall between poisoned memory and real agent action.
 
 Others check the transaction.
 Miasma checks the memory that caused it.
@@ -337,7 +337,7 @@ The proposed payment remains proposed only.
 1. Funds moved: 0
 2. Action: BLOCKED
 3. Poisoned memory-action path
-4. Miasma Atlas map
+4. MIASMA map
 5. Proof chain
 6. Sui QuarantineReceipt / Seal / Walrus / Groth16 / Nitro details
 

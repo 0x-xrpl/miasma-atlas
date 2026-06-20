@@ -1,13 +1,13 @@
-# Hey Sui UI Direction
+# MIASMA UI Direction
 
-This document defines the plain wireframe shell for the current Hey Sui interface.
+This document defines the plain wireframe shell for the current MIASMA interface.
 
 ## Purpose
 
 The UI should show the runtime story in one glance:
 
-- Hey Sui
-- Say it or type it. Hey Sui reads before value moves.
+- MIASMA
+- Say it or type it. MIASMA reads before value moves.
 - Top up. Trade. Block.
 - Funds moved: 0
 
@@ -34,7 +34,7 @@ Do not add dense proof walls or heavy visual treatment.
 
 ## Data source
 
-`src/lib/hey-sui/flows.ts` is the single flow source for the wireframe.
+The shared flow source defines the wireframe copy and states.
 It should hold the command text, the read fields, the verifier checks, and the session fields.
 
 ## Semantic rule

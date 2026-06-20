@@ -1,10 +1,10 @@
-# Hey Sui UI Integration Contract
+# MIASMA UI Integration Contract
 
 This contract keeps the wireframe easy to replace later without changing the semantic flow.
 
 ## Data contract
 
-Each flow in `src/lib/hey-sui/flows.ts` provides:
+Each flow in the shared flow source provides:
 
 - `id`
 - `tabLabel`
@@ -27,8 +27,8 @@ The app shell should render these regions in order:
 
 ## Required public wording
 
-- Hey Sui
-- Say it or type it. Hey Sui reads before value moves.
+- MIASMA
+- Say it or type it. MIASMA reads before value moves.
 - Top up. Trade. Block.
 - Funds moved: 0
 

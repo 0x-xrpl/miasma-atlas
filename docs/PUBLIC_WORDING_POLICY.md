@@ -1,6 +1,6 @@
 # Public Wording Policy
 
-This policy defines how Miasma Atlas should describe implementation status in public documentation.
+This policy defines how MIASMA should describe implementation status in public documentation.
 
 ## Core rule
 
@@ -54,5 +54,5 @@ For Seal, Walrus, Nitro, Groth16, and MCP, do not overclaim. Prefer:
 
 ## Approved public summary
 
-“Miasma Atlas is locally operational across its documented memory-action verification path. The canonical evaluation scenario is fixed, the verifier boundary is implemented, the skill firewall is wired, the Sui QuarantineReceipt module builds, and the evidence-lock, artifact-reference, proof, enclave, and tool-interface surfaces are defined as implementation boundaries.”
+“MIASMA is locally operational across its documented memory-action verification path. The canonical evaluation scenario is fixed, the verifier boundary is implemented, the skill firewall is wired, the Sui QuarantineReceipt module builds, and the evidence-lock, artifact-reference, proof, enclave, and tool-interface surfaces are defined as implementation boundaries.”
 
