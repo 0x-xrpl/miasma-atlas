@@ -15,7 +15,7 @@ MIASMA blocked the sequence before wallet approval.
 
 </div>
 
-## Five-second incident
+## Five-second incident block
 
 ```txt
 Small actions became a micro-drain pattern.
@@ -35,23 +35,22 @@ Funds moved: 0.
 | Decision | BLOCKED |
 | Wallet approval | Not requested |
 | Sui submit | Not submitted |
-| Transaction digest | None - blocked before execution |
+| Transaction digest | None — blocked before execution |
 | Funds moved | 0 |
 
 ## Problem
 
-AI agents are starting to act on-chain.
-Wallets show what will be signed.
-Policies can limit budgets or protocols.
-Neither proves whether the memory that caused the action was poisoned.
-
-A small action can look harmless.
+AI agents are beginning to act on-chain.  
+Wallets show what will be signed.  
+Policies can limit budgets or protocols.  
+But neither proves whether the memory that caused the action was poisoned.  
+A small action can look harmless.  
 A sequence of small actions can become a micro-drain.
 
 ## Solution
 
-MIASMA verifies the memory-action path before wallet approval.
-If the path is poisoned, MIASMA blocks the sequence, generates evidence, and prevents wallet approval and Sui submit.
+MIASMA verifies the memory-action path before wallet approval.  
+If the path is poisoned, MIASMA blocks the sequence, generates proof, creates an evidence capsule, and prevents wallet approval and Sui submit.
 
 ## Blocked vs clean
 
@@ -66,37 +65,43 @@ If the path is poisoned, MIASMA blocks the sequence, generates evidence, and pre
 | User signature | Not requested | User approves |
 | Sui submit | Not submitted | Submitted |
 | Transaction digest | None | Captured |
-| Evidence capsule | Generated | Generated |
+| Evidence Capsule | Generated | Generated |
 | Funds moved | 0 | Only after clean approval |
 
-## Product flow
+## Mermaid product flow
 
 ```mermaid
-flowchart LR
-  A[Agent draft] --> B[Memory-action path]
-  B --> C[Local Rust verifier]
-  C --> D[MIASMA decision]
-  D -->|Blocked| E[Wallet approval skipped]
-  D -->|Allowed| F[Wallet approval]
-  F --> G[Sui submit]
-  G --> H[Digest captured]
-  E --> I[Funds moved: 0]
+flowchart TD
+    A[Agent task] --> B[MemoryActionContext]
+    B --> C[Memory-action path scan]
+    C --> D[Micro-drain pattern detection]
+    D --> E[MIASMA Gate]
+    E --> F{Score >= threshold?}
+    F -- Clean --> G[Wallet approval requested]
+    G --> H[Sui / DeepBook submit]
+    H --> I[Digest captured]
+    I --> J[Evidence Capsule generated]
+    F -- Poisoned --> K[Blocked before wallet approval]
+    K --> L[Wallet approval not requested]
+    L --> M[Sui submit not submitted]
+    M --> N[Funds moved: 0]
+    N --> O[Evidence Capsule generated]
 ```
 
-## What works today
+## What Works Today
 
 | Surface | Status |
 |---|---|
 | Local Rust verifier | Working |
 | Poisoned / clean fixtures | Working |
 | Quarantine decision semantics | Working |
-| Evidence capsule generation | Working |
+| Evidence Capsule generation | Working |
 | Sui QuarantineReceipt module | Move build passing |
-| Groth16 prove + verify | Live locally |
+| Groth16 prove / verify | Live locally |
 | Skill firewall | Wired |
 | Wallet approval gating | Wired |
 
-## Production truth
+## Production Truth
 
 | Surface | Status |
 |---|---|
@@ -104,7 +109,7 @@ flowchart LR
 | Walrus upload | Only real when configured |
 | Seal encryption | Only real when configured |
 | Sui anchor | Only real when configured |
-| Nitro / TEE attestation | Only real in an actual Nitro runtime |
+| Nitro / TEE verification | Only real in actual Nitro runtime |
 | Mainnet claims | Not claimed |
 
 ## Commands
@@ -116,23 +121,23 @@ npm run zk:verify
 npm run build
 ```
 
-Other existing scripts:
+Optional scripts, with caveats:
 
+- `npm run tee:verify` - real Nitro / TEE verifier, requires a real attestation document
 - `npm run evidence:seal` - real Seal gate, requires config
 - `npm run evidence:walrus` - real Walrus gate, requires config
 - `npm run evidence:anchor` - real Sui capsule anchor gate, requires config
-- `npm run tee:verify` - real Nitro/TEE verifier, fails closed without a real attestation document
 - `npm run move:build` - Move build for the receipt module
 
-## Commercial path
+## Commercial Path
 
-| Segment | What it supports |
-|---|---|
-| Agent apps | Protected action scan API / SDK |
-| Protocols | Pre-execution integration before Move calls and DeFi actions |
-| Teams | Workspace console, incident archive, audit trail |
-| Evidence users | Capsule verification and encrypted artifact access |
-| Ecosystem | Safer autonomous Sui activity |
+| Customer | Product surface | Revenue path |
+|---|---|---|
+| Agent apps | Protected action scan API / SDK | Per protected action |
+| Protocols | Pre-execution integration before Move calls / DeFi actions | Integration + volume |
+| Teams | Workspace console / incident archive / audit trail | Subscription |
+| Evidence users | Capsule verification / encrypted artifact access | Per verification / access |
+| Sui ecosystem | Safer autonomous Sui activity | More trusted agent usage |
 
 ## Built through Sui
 
@@ -152,7 +157,7 @@ I will keep building.
 
 ## Final line
 
-Agents can act.
-MIASMA can block.
+Agents can act.  
+MIASMA verifies why they act before funds move.  
 Funds moved: 0.
 
