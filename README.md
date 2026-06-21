@@ -1,6 +1,12 @@
+<div align="center">
+
+<img src="./assets/miasma-logo-horizontal.png" alt="MIASMA" width="640" />
+
 # MIASMA
 
 **Agentic memory-action firewall for Sui agents**
+
+</div>
 
 The agent was not hacked at execution.  
 It was poisoned in memory.
