@@ -98,7 +98,7 @@ Agent SkillUseRequest
 - Rust Verifier Layer
 - Receipt Layer
 - Evidence Layer
-- Nitro Target Layer
+- Verifier Target Layer
 - Groth16 Proof Layer
 - Agent Runtime / Skill Firewall Layer
 - MCP Interface Layer
@@ -126,7 +126,7 @@ flowchart LR
   D --> E[Evidence Path]
   E --> F[Seal Locked Evidence]
   E --> G[Walrus Artifact Ref]
-  D --> H[Groth16 Quarantine Proof Implementation]
+  D --> H[Groth16 Quarantine Proof]
   D --> I[Sui QuarantineReceipt]
   I --> J[Skill Firewall Block]
   J --> K[Real Execution Blocked]
@@ -138,23 +138,23 @@ flowchart LR
 ```mermaid
 sequenceDiagram
   participant Agent
-  participant Miasma
+  participant MIASMA
   participant Verifier
   participant Seal
   participant Walrus
   participant Proof
   participant Sui
 
-  Agent->>Miasma: request send_usdc 900 USDC
-  Miasma->>Miasma: build MemoryActionContext
-  Miasma->>Miasma: map vendor_policy_v3.txt → payment_rules.md → send_usdc
-  Miasma->>Verifier: run local Rust verifier
-  Verifier-->>Miasma: contaminationScore 87, actionBlocked true
-  Miasma->>Seal: model locked sensitive evidence path
-  Miasma->>Walrus: model public artifact reference
-  Miasma->>Proof: attach quarantine threshold proof implementation
-  Miasma->>Sui: record QuarantineReceipt
-  Miasma-->>Agent: block skill execution
+  Agent->>MIASMA: request send_usdc 900 USDC
+  MIASMA->>MIASMA: build MemoryActionContext
+  MIASMA->>MIASMA: map vendor_policy_v3.txt → payment_rules.md → send_usdc
+  MIASMA->>Verifier: run local Rust verifier
+  Verifier-->>MIASMA: contaminationScore 87, actionBlocked true
+  MIASMA->>Seal: model locked sensitive evidence path
+  MIASMA->>Walrus: model public artifact reference
+  MIASMA->>Proof: attach quarantine threshold proof
+  MIASMA->>Sui: record QuarantineReceipt
+  MIASMA-->>Agent: block skill execution
 ```
 
 ### Threat model diagram
@@ -165,7 +165,7 @@ flowchart LR
   M2 --> M3[send_usdc skill]
   X[Hidden instruction contamination] -. infects .-> M1
   M3 --> A[Agent proposes 900 USDC]
-  A --> F[Miasma Skill Firewall]
+  A --> F[MIASMA Skill Firewall]
   F --> V[Verifier score: 87]
   V --> B[BLOCKED]
   B --> Z[Funds moved: 0]
@@ -302,7 +302,7 @@ Threats not fully solved in the canonical scenario:
 - full formal verification
 - production KMS enforcement
 - real-time cross-agent collusion
-- production Seal / Walrus / Nitro deployment
+- production Seal / Walrus deployment
 
 ## Interface Requirements
 
@@ -323,7 +323,7 @@ Threats not fully solved in the canonical scenario:
 | Seal evidence path | Models how sensitive memory evidence stays locked instead of being exposed publicly | implemented boundary |
 | Walrus artifact ref | Models public artifact references without publishing raw sensitive memory | implemented boundary |
 | Groth16 quarantine proof | Models a threshold-rule proof that the committed scan artifact satisfies quarantine conditions | implemented boundary |
-| Nitro verifier target | Defines the target boundary for running the verifier inside an enclave | implemented boundary |
+| Verifier target | Defines the target boundary for running the verifier locally | implemented boundary |
 
 Meaningful verification means the UI does not just say risk detected.
 It shows the path, the verifier result, the evidence boundary, the receipt, and the blocked skill state.
@@ -339,7 +339,7 @@ The proposed payment remains proposed only.
 3. Poisoned memory-action path
 4. MIASMA map
 5. Proof chain
-6. Sui QuarantineReceipt / Seal / Walrus / Groth16 / Nitro details
+6. Sui QuarantineReceipt / Seal / Walrus / Groth16 details
 
 ## Visual Copy
 
@@ -401,7 +401,7 @@ Funds moved 0: high-contrast white
 
 - Seal evidence locking path
 - Walrus artifact reference path
-- Nitro verifier target
+- Verifier target
 - Groth16 quarantine proof
 - MCP interface
 - Frontend receipt/on-chain mint wiring
@@ -410,7 +410,6 @@ Funds moved 0: high-contrast white
 
 - Production Seal encryption is not live.
 - Real Walrus upload is not live unless separately implemented.
-- Nitro CLI is unavailable locally.
 - Groth16 proof is a sample implementation of the threshold-rule surface.
 - MCP transport is not live.
 - No fake transaction digest.

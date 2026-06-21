@@ -18,11 +18,11 @@
 
 ## Optional Runtime
 
-- Nitro / TEE attestation verification only in a real Nitro runtime
+- attestation verification only when a real isolated runtime is available
 
 ## Not Claimed
 
-- fake TEE verification
+- unverified runtime verification
 - fake Walrus blob id
 - fake Seal policy id
 - fake Sui digest for blocked action
@@ -37,6 +37,5 @@
 | Walrus upload | Only real when configured |
 | Seal encryption | Only real when configured |
 | Sui anchor | Only real when configured |
-| Nitro / TEE verification | Only real in actual Nitro runtime |
+| Isolated runtime verification | Only real in the actual isolated runtime |
 | Mainnet claims | Not claimed |
-

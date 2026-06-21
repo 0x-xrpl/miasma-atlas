@@ -10,4 +10,4 @@ It is intentionally small:
 - the module emits a `QuarantineReceiptCreated` event
 - the receipt fields line up with the local `MiasmaScanArtifact` and frontend scaffold
 
-Later, this object can be linked to Seal, Walrus, and Groth16 without changing the core meaning of the receipt.
+This object can be linked to Seal, Walrus, and Groth16 without changing the core meaning of the receipt.

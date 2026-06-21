@@ -1,6 +1,6 @@
 # Evidence Path
 
-Miasma does not put raw memory evidence on-chain. The public receipt stores hashes, refs, scores, and decisions. Sensitive evidence is modeled as Seal-locked and referenced through a Walrus artifact path.
+MIASMA does not put raw memory evidence on-chain. The public receipt stores hashes, refs, scores, and decisions. Sensitive evidence is modeled as Seal-locked and referenced through a Walrus artifact path.
 
 ## What is public
 
@@ -32,7 +32,6 @@ Miasma does not put raw memory evidence on-chain. The public receipt stores hash
 - Seal is implemented as a locked evidence layer
 - Walrus is implemented as an artifact reference layer
 - Groth16 is still pending and not implemented here
-- Nitro is not implemented here
 
 ## Next integration boundary
 

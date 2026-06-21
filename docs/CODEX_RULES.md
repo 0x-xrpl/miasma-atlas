@@ -27,7 +27,7 @@ Never use reference material at runtime.
 Never make the final app look like Shell, Audric, NVRAM, Remora, or any other project.
 Use benchmark concepts only as strategic inspiration reflected in the MIASMA architecture.
 
-Do not make AWS, Nitro, Seal, Walrus, Groth16, Enoki, or MCP mandatory for the first local UI boot.
+Do not make Seal, Walrus, Groth16, Enoki, or MCP mandatory for the first local UI boot.
 Implement them cleanly first.
 Implement them step by step after the MIASMA UI, Rust verifier, and Sui QuarantineReceipt path are stable.
 
@@ -47,7 +47,7 @@ MIASMA is not:
 - Audric clone
 - generic AI wallet
 - generic risk dashboard
-- generic intent engine
+- intent routing layer
 - generic Walrus storage app
 - DeFi strategy race
 - payroll lending app
