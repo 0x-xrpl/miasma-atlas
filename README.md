@@ -4,10 +4,11 @@
 
 # MIASMA
 
-**Memory-action quarantine for agentic Sui actions**
+**Memory-action quarantine for agentic Sui actions.**
 
-The agent was not hacked at execution.  
-It was poisoned in memory.
+Live demo: https://miasma-atlas.vercel.app
+
+The agent was not hacked at execution. It was poisoned in memory.
 
 **Map. Verify. Block. Funds moved: 0.**
 
@@ -30,6 +31,72 @@ Sui is the settlement and receipt layer for the blocked decision and the public 
 </p>
 
 </div>
+
+---
+
+## What MIASMA does
+
+- Detects poisoned memory-action paths.
+- Blocks dangerous wallet approval before signing.
+- Shows projected exposure for the blocked path.
+- Keeps `funds moved` at `0`.
+- Prepares a safe Sui receipt proof path for blocked scans.
+
+## Why Sui
+
+- Wallet Standard authorization for controlled wallet access.
+- zkLogin-ready identity path for the demo flow.
+- Move receipt package for the blocked-scan receipt object.
+- Testnet receipt digest and SuiVision proof path when configured.
+
+## Demo flow
+
+1. Open the live site.
+2. Connect Sui Wallet.
+3. Continue with the zkLogin email prompt.
+4. Load the poisoned memory sample.
+5. Replay the scan.
+6. Detect the sliced exposure path.
+7. Block before wallet approval.
+8. Record a safe quarantine receipt on Testnet when configured.
+
+## Safety model
+
+- No dangerous transaction is signed.
+- No USDC or SUI transfer is submitted.
+- No vendor settlement is executed.
+- `funds moved` remains `0`.
+
+## Repository structure
+
+- `index.html`
+- `public/samples`
+- `contracts/miasma_receipt`
+- `scripts/record_receipt.ts`
+- `docs/SUI_RECEIPT_FLOW.md`
+
+## Local development
+
+```bash
+npm install
+npm run dev
+npm run build
+```
+
+## Sui receipt commands
+
+```bash
+sui move build --path contracts/miasma_receipt
+```
+
+- Publish flow: `sui client publish --path contracts/miasma_receipt`
+- Record flow: `npm run sui:receipt:record`
+
+## Honest limitations
+
+- Receipt recording requires a configured package ID.
+- Testnet gas is required for an on-chain receipt digest.
+- Mainnet-compatible receipt code exists, but Testnet is the demo target.
 
 ---
 
