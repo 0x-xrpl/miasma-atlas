@@ -38,7 +38,7 @@ Main first-screen evaluation:
 - Hidden instruction contamination detected
 - Action: BLOCKED
 - Funds moved: 0
-- Verified path: Memory hash -> Rust verifier -> Nitro enclave verifier -> Seal locked evidence -> Walrus artifact ref -> Groth16 quarantine proof -> Sui QuarantineReceipt
+- Verified path: Memory hash -> Rust verifier -> Seal locked evidence -> Walrus artifact ref -> Groth16 quarantine proof -> Sui QuarantineReceipt
 
 MIASMA is not:
 

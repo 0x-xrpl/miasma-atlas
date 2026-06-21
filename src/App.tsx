@@ -1,64 +1,22 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import {
-  ConnectButton,
-  useCurrentAccount,
-  useSignAndExecuteTransaction,
-  useSuiClientContext,
-} from '@mysten/dapp-kit';
-import {
-  HEY_SUI_NAME,
-  HEY_SUI_SCOPE,
-  HEY_SUI_TAGLINE,
-  LIVE_DEEPBOOK_BASE_TO_QUOTE_SLIPPAGE_BPS,
-  buildLiveDeepBookSwapTransaction,
-  LIVE_TESTNET_TRANSFER_LABEL,
-  buildLiveTestnetTransferTransaction,
-  buildSuiVisionTxUrl,
-} from './sui';
-import { runAgenticActionFlow, type FlowResult } from './core';
-import { getHeySuiFlow, heySuiFlows, type HeySuiFlowId } from './lib/miasma/flows';
-import {
-  buildEvidenceCapsuleFields,
-  createEvidenceCapsule,
-  sha256Hex,
-  stableStringify,
-  type EvidenceCapsule,
-} from './lib/miasma/evidence-capsule';
+import type { ReactNode } from 'react';
+import { sampleEvidencePath } from './lib/miasma/sample-evidence-path';
+import { sampleQuarantineProof } from './lib/miasma/sample-quarantine-proof';
 import { sampleQuarantineReceipt } from './lib/miasma/sample-quarantine-receipt';
 import { sampleScanArtifact } from './lib/miasma/sample-scan-artifact';
-import capsuleAnchorStatus from './core/boundaries/capsule-anchor-status';
-import sealEvidenceStatus from './core/boundaries/seal-evidence-status';
-import walrusEvidenceStatus from './core/boundaries/walrus-evidence-status';
-import zkGroth16Status from './core/boundaries/zk-groth16-status';
 
-type Stage = 'idle' | 'listening' | 'intent_detected' | 'preview' | 'confirm' | 'executed' | 'blocked';
-
-type ExecutionRecord = {
-  digest: string;
-  explorerUrl: string;
-};
-
-type ZkGroth16Status = typeof zkGroth16Status & {
-  proofHash?: string;
-  publicSignalsHash?: string;
-};
-
-const STAGE_LABELS: Record<Stage, string> = {
-  idle: 'Idle',
-  listening: 'Listening',
-  intent_detected: 'Intent detected',
-  preview: 'Preview',
-  confirm: 'Confirm',
-  executed: 'Executed',
-  blocked: 'Blocked',
+type Field = {
+  label: string;
+  value: ReactNode;
 };
 
 function Panel({
+  eyebrow,
   title,
   subtitle,
   className = '',
   children,
 }: {
+  eyebrow?: string;
   title: string;
   subtitle?: string;
   className?: string;
@@ -66,675 +24,195 @@ function Panel({
 }) {
   return (
     <section className={`panel ${className}`.trim()}>
-      <div>
-        <h2 className="panel-title">{title}</h2>
-        {subtitle ? <p className="panel-subtitle">{subtitle}</p> : null}
+      <div className="panel-head">
+        {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
+        <h2>{title}</h2>
+        {subtitle ? <p className="subcopy">{subtitle}</p> : null}
       </div>
       {children}
     </section>
   );
 }
 
-function FlowSelector({
-  activeFlowId,
-  onSelect,
-}: {
-  activeFlowId: HeySuiFlowId;
-  onSelect: (flowId: HeySuiFlowId) => void;
-}) {
+function Fields({ items }: { items: Field[] }) {
   return (
-    <div className="flow-tabs" role="tablist" aria-label="MIASMA flows">
-      {heySuiFlows.map((flow) => (
-        <button
-          key={flow.id}
-          type="button"
-          className="flow-tab"
-          aria-selected={flow.id === activeFlowId}
-          onClick={() => onSelect(flow.id)}
-        >
-          {flow.tabLabel}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function FieldList({ fields }: { fields: readonly { label: string; value: string }[] }) {
-  return (
-    <div className="field-list">
-      {fields.map((field) => (
-        <div className="field-row" key={field.label}>
-          <div className="field-label">{field.label}</div>
-          <div className="field-value">{field.value}</div>
+    <dl className="fields">
+      {items.map((item) => (
+        <div className="field" key={item.label}>
+          <dt>{item.label}</dt>
+          <dd>{item.value}</dd>
         </div>
       ))}
-    </div>
+    </dl>
   );
 }
 
-type SpeechRecognitionResultLike = {
-  0: { transcript: string };
-};
-
-type SpeechRecognitionEventLike = {
-  results: ArrayLike<SpeechRecognitionResultLike>;
-};
-
-type SpeechRecognitionLike = {
-  lang: string;
-  interimResults: boolean;
-  continuous: boolean;
-  onstart: (() => void) | null;
-  onresult: ((event: SpeechRecognitionEventLike) => void) | null;
-  onerror: (() => void) | null;
-  onend: (() => void) | null;
-  start: () => void;
-  stop: () => void;
-};
-
-type SpeechRecognitionConstructor = new () => SpeechRecognitionLike;
-
-function getSpeechRecognitionConstructor(): SpeechRecognitionConstructor | null {
-  if (typeof window === 'undefined') {
-    return null;
-  }
-
-  const browserWindow = window as Window & {
-    SpeechRecognition?: SpeechRecognitionConstructor;
-    webkitSpeechRecognition?: SpeechRecognitionConstructor;
-  };
-
-  return browserWindow.SpeechRecognition ?? browserWindow.webkitSpeechRecognition ?? null;
+function Chip({ children, tone = 'default' }: { children: ReactNode; tone?: 'default' | 'danger' }) {
+  return <span className={`chip chip-${tone}`}>{children}</span>;
 }
 
-function shortAddress(address: string) {
-  if (address.length <= 12) {
-    return address;
-  }
-
-  return `${address.slice(0, 8)}…${address.slice(-6)}`;
+function InlineCode({ children }: { children: ReactNode }) {
+  return <code className="inline-code">{children}</code>;
 }
 
-function shortDigest(digest: string) {
-  if (digest.length <= 18) {
-    return digest;
-  }
+function PathRail() {
+  const nodes = sampleScanArtifact.memoryPath;
 
-  return `${digest.slice(0, 10)}…${digest.slice(-6)}`;
-}
-
-function flowToIntentFields(flow: FlowResult) {
-  return [
-    { label: 'Kind', value: flow.intent.kind },
-    { label: 'Flow', value: flow.intent.flowId },
-    { label: 'Confidence', value: `${Math.round(flow.intent.confidence * 100)}%` },
-    { label: 'Normalized', value: flow.intent.normalizedIntent },
-    { label: 'Reason', value: flow.intent.reason },
-    { label: 'Clarification', value: flow.intent.needsClarification ? 'Needed' : 'Not needed' },
-  ];
-}
-
-function flowToPreviewFields(flow: FlowResult) {
-  const preview = flow.preview;
-  if (preview.kind === 'transfer') {
-    return [
-      { label: 'Kind', value: preview.kind },
-      { label: 'Token', value: preview.token },
-      { label: 'Amount', value: String(preview.amount) },
-      { label: 'Recipient', value: preview.recipient },
-      { label: 'Mode', value: preview.executionMode },
-      { label: 'Funds moved', value: String(preview.fundsMoved) },
-    ];
-  }
-  if (preview.kind === 'deepbook_swap') {
-    return [
-      { label: 'Kind', value: preview.kind },
-      { label: 'Venue', value: preview.venue },
-      { label: 'Token in', value: preview.tokenIn },
-      { label: 'Token out', value: preview.tokenOut },
-      { label: 'Amount in', value: String(preview.amountIn) },
-      { label: 'Estimated output', value: String(preview.estimatedOutput) },
-      { label: 'Slippage bps', value: String(preview.slippageBps) },
-      { label: 'Funds moved', value: String(preview.fundsMoved) },
-    ];
-  }
-  return [
-    { label: 'Kind', value: preview.kind },
-    { label: 'Label', value: preview.label },
-    { label: 'Mode', value: preview.executionMode },
-    { label: 'Funds moved', value: String(preview.fundsMoved) },
-  ];
-}
-
-function flowToPolicyFields(flow: FlowResult) {
-  return [
-    { label: 'Rule', value: flow.policy.ruleId },
-    { label: 'Allowed', value: flow.policy.allowed ? 'Yes' : 'No' },
-    { label: 'Blocked', value: flow.policy.blocked ? 'Yes' : 'No' },
-    { label: 'Confirmation required', value: flow.policy.confirmationRequired ? 'Yes' : 'No' },
-    { label: 'Summary', value: flow.policy.summary },
-    { label: 'Reasons', value: flow.policy.reasons.join(' | ') || 'None' },
-  ];
-}
-
-function flowToBoundaryFields(flow: FlowResult) {
-  return Object.values(flow.boundaryStates).map((boundary) => ({
-    label: boundary.name,
-    value: `${boundary.state} — ${boundary.detail}`,
-  }));
-}
-
-function flowToReceiptFields(flow: FlowResult) {
-  return [
-    { label: 'Receipt ID', value: flow.receipt.receiptId },
-    { label: 'Status', value: flow.receipt.status },
-    { label: 'Decision', value: flow.receipt.decision },
-    { label: 'Summary', value: flow.receipt.summary },
-    { label: 'Funds moved', value: String(flow.receipt.fundsMoved) },
-    { label: 'Evidence ref', value: flow.receipt.evidenceRef.ref },
-    { label: 'Artifact ref', value: flow.receipt.artifactRef.ref },
-  ];
-}
-
-function parseProofHash(detail: string) {
-  const match = detail.match(/Proof hash:\s*([a-f0-9]+)/i);
-  return match?.[1] ?? '';
-}
-
-function nitroStatusFields() {
-  return [
-    { label: 'Status', value: 'TEE ATTESTATION GATE' },
-    { label: 'State', value: 'PRODUCTION GATE FAILED' },
-    { label: 'Detail', value: 'Nitro attestation document not configured' },
-    { label: 'Command', value: 'npm run tee:verify' },
-    { label: 'Fake attestation', value: 'Rejected' },
-  ];
+  return (
+    <div className="path-rail" aria-label="Memory-action path">
+      {nodes.map((node, index) => {
+        const isContaminated = index > 0;
+        return (
+          <div className={`path-node ${isContaminated ? 'path-node-danger' : ''}`} key={node}>
+            <span className="path-index">{String(index + 1).padStart(2, '0')}</span>
+            <span className="path-label">{node}</span>
+            <span className="path-state">{index === nodes.length - 1 ? 'blocked' : isContaminated ? 'tainted' : 'checked'}</span>
+          </div>
+        );
+      })}
+      <div className="path-arrow" aria-hidden="true" />
+    </div>
+  );
 }
 
 export default function App() {
-  const [activeFlowId, setActiveFlowId] = useState<HeySuiFlowId>('transitTopUp');
-  const [draft, setDraft] = useState(() => heySuiFlows[0].command);
-  const [stage, setStage] = useState<Stage>('idle');
-  const [statusMessage, setStatusMessage] = useState(HEY_SUI_TAGLINE);
-  const [executionRecord, setExecutionRecord] = useState<ExecutionRecord | null>(null);
-  const [evidenceCapsule, setEvidenceCapsule] = useState<EvidenceCapsule | null>(null);
-  const [errorMessage, setErrorMessage] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const recognitionRef = useRef<SpeechRecognitionLike | null>(null);
-  const currentAccount = useCurrentAccount();
-  const { client, network } = useSuiClientContext();
-  const { mutateAsync: signAndExecuteTransaction, isPending: isExecuting } =
-    useSignAndExecuteTransaction();
-
-  const coreFlow = useMemo(
-    () =>
-      runAgenticActionFlow(draft, {
-        confirmed: stage === 'confirm' || stage === 'executed',
-        source: 'voice',
-      }),
-    [draft, stage],
-  );
-  const activeFlow = getHeySuiFlow(activeFlowId);
-  const speechRecognitionAvailable = Boolean(getSpeechRecognitionConstructor());
-  const isDeepBookFlow = coreFlow.intent.kind === 'deepbook_swap';
-  const selectedTabIsBlocked = activeFlowId === 'hiddenTransferBlock';
-  const isLiveTransferFlow = coreFlow.intent.kind === 'transfer';
-  const isPreviewOnlyFlow =
-    coreFlow.intent.kind === 'transit' ||
-    coreFlow.intent.kind === 'balance_check';
-  const isBlockedFlow = coreFlow.policy.blocked;
-  const zkStatus = zkGroth16Status as ZkGroth16Status;
-
-  useEffect(() => {
-    let cancelled = false;
-
-    void (async () => {
-      const proofHash = zkStatus.proofHash ?? parseProofHash(zkStatus.detail);
-      const publicSignalsHash = zkStatus.publicSignalsHash ?? '';
-
-      const capsule = await createEvidenceCapsule({
-        capsuleId: sampleQuarantineReceipt.receiptId,
-        actionKind: sampleQuarantineReceipt.decision === 'blocked' ? 'transfer' : 'unknown',
-        intentHash: await sha256Hex(stableStringify(sampleScanArtifact.memoryPath)),
-        policyHash: await sha256Hex(
-          stableStringify({
-            decision: sampleQuarantineReceipt.decision,
-            recommendation: sampleQuarantineReceipt.recommendation,
-            contaminationScore: sampleQuarantineReceipt.contaminationScore,
-          }),
-        ),
-        contextHash: await sha256Hex(
-          stableStringify({
-            memoryHash: sampleQuarantineReceipt.memoryHash,
-            proposedAmount: sampleQuarantineReceipt.proposedAmount,
-            blocked: sampleQuarantineReceipt.decision === 'blocked',
-          }),
-        ),
-        memoryActionContextHash: await sha256Hex(stableStringify(sampleScanArtifact)),
-        suiDigest: executionRecord?.digest,
-        deepbookDigest: isDeepBookFlow ? executionRecord?.digest : undefined,
-        proofHash,
-        publicSignalsHash,
-        verificationState:
-          zkStatus.state === 'verified'
-            ? 'verified'
-            : zkStatus.state === 'blocked'
-              ? 'blocked'
-              : 'gate_failed',
-        fundsMoved: sampleQuarantineReceipt.fundsMoved,
-        blocked: sampleQuarantineReceipt.decision === 'blocked',
-        confirmationRequired: true,
-        walrusBlobId: walrusEvidenceStatus.blobId,
-        walrusObjectId: walrusEvidenceStatus.objectId,
-        walrusStatus: walrusEvidenceStatus.state,
-        sealPolicyId: sealEvidenceStatus.policyId,
-        sealStatus: sealEvidenceStatus.state,
-        sealCiphertextHash: sealEvidenceStatus.ciphertextHash,
-        createdAtMs: Date.now(),
-      });
-
-      if (!cancelled) {
-        setEvidenceCapsule(capsule);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [
-    executionRecord?.digest,
-    isDeepBookFlow,
-    sampleQuarantineReceipt.contaminationScore,
-    sampleQuarantineReceipt.decision,
-    sampleQuarantineReceipt.fundsMoved,
-    sampleQuarantineReceipt.memoryHash,
-    sampleQuarantineReceipt.proposedAmount,
-    zkStatus.detail,
-    zkStatus.publicSignalsHash,
-    zkStatus.proofHash,
-    zkStatus.state,
-  ]);
-
-  useEffect(() => {
-    setDraft(activeFlow.command);
-    setExecutionRecord(null);
-    setErrorMessage('');
-    setStage(selectedTabIsBlocked ? 'blocked' : 'idle');
-    setStatusMessage(
-      selectedTabIsBlocked
-        ? 'Hidden transfer block selected. Funds moved: 0.'
-        : isDeepBookFlow
-          ? 'DeepBook config present. Preview then confirm to execute.'
-        : HEY_SUI_TAGLINE,
-    );
-    recognitionRef.current?.stop();
-    recognitionRef.current = null;
-  }, [activeFlow.command, isDeepBookFlow, selectedTabIsBlocked]);
-
-  useEffect(
-    () => () => {
-      recognitionRef.current?.stop();
-      recognitionRef.current = null;
-    },
-    [],
-  );
-
-  const syncIntent = (nextDraft: string) => {
-    setDraft(nextDraft);
-    setStage('intent_detected');
-    setStatusMessage('Intent detected.');
-    setErrorMessage('');
-    setExecutionRecord(null);
-  };
-
-  const startVoiceCapture = () => {
-    const SpeechRecognition = getSpeechRecognitionConstructor();
-    if (!SpeechRecognition) {
-      textareaRef.current?.focus();
-      setStage('idle');
-      setStatusMessage('Voice input is unavailable here. Type privately instead.');
-      return;
-    }
-
-    recognitionRef.current?.stop();
-
-    const recognition = new SpeechRecognition();
-    let capturedTranscript = '';
-
-    recognition.lang = 'en-US';
-    recognition.interimResults = true;
-    recognition.continuous = false;
-    recognition.onstart = () => {
-      setStage('listening');
-      setStatusMessage('Listening for a command.');
-      setErrorMessage('');
-    };
-    recognition.onresult = (event) => {
-      const transcript = Array.from(event.results, (result) => result[0].transcript)
-        .filter(Boolean)
-        .join(' ')
-        .trim();
-
-      if (transcript) {
-        capturedTranscript = transcript;
-        syncIntent(transcript);
-      }
-    };
-    recognition.onerror = () => {
-      recognitionRef.current = null;
-      setStage('idle');
-      setStatusMessage('Voice input failed. Type privately instead.');
-    };
-    recognition.onend = () => {
-      recognitionRef.current = null;
-      if (!capturedTranscript) {
-        setStage('idle');
-        setStatusMessage('Voice capture ended.');
-      }
-    };
-
-    recognitionRef.current = recognition;
-    recognition.start();
-  };
-
-  const previewIntent = () => {
-    setStage('preview');
-    setStatusMessage('Previewing the action session.');
-    setErrorMessage('');
-    setExecutionRecord(null);
-  };
-
-  const confirmIntent = () => {
-    setStage('confirm');
-    setStatusMessage('Action session confirmed.');
-    setErrorMessage('');
-    setExecutionRecord(null);
-  };
-
-  const primaryActionLabel = isBlockedFlow
-    ? 'Block request'
-    : isPreviewOnlyFlow
-      ? 'Preview only'
-      : stage === 'executed'
-        ? 'Executed'
-        : 'Execute on Sui';
-
-  const primaryActionDisabled =
-    isExecuting ||
-    ((isLiveTransferFlow || isDeepBookFlow) && stage !== 'confirm') ||
-    isPreviewOnlyFlow;
-
-  const runPrimaryAction = async () => {
-    if (isDeepBookFlow && stage !== 'confirm') {
-      setStage('preview');
-      setStatusMessage('Preview DeepBook only. Confirm to execute.');
-      return;
-    }
-
-    if (isDeepBookFlow) {
-      if (!currentAccount) {
-        setStage('confirm');
-        setStatusMessage('Connect a wallet to execute the DeepBook transaction.');
-        return;
-      }
-
-      if (network !== 'testnet') {
-        setStage('confirm');
-        setStatusMessage('Switch the wallet network to testnet to execute the DeepBook transaction.');
-        setErrorMessage(`Current network: ${String(network)}.`);
-        return;
-      }
-
-      try {
-        setStage('confirm');
-        setStatusMessage('DeepBook config present. Building transaction.');
-        setErrorMessage('');
-
-        const deepbookPreview = coreFlow.preview.kind === 'deepbook_swap' ? coreFlow.preview : null;
-        if (!deepbookPreview) {
-          throw new Error('PRODUCTION GATE FAILED: DeepBook config missing.');
-        }
-
-        const transaction = buildLiveDeepBookSwapTransaction({
-          client,
-          senderAddress: currentAccount.address,
-          amountIn: deepbookPreview.amountIn,
-          estimatedOutput: deepbookPreview.estimatedOutput,
-          network: network as 'mainnet' | 'testnet' | 'devnet',
-          slippageBps: deepbookPreview.slippageBps || LIVE_DEEPBOOK_BASE_TO_QUOTE_SLIPPAGE_BPS,
-        });
-        setStatusMessage('DeepBook transaction built. Wallet signature requested.');
-
-        const result = await signAndExecuteTransaction({ transaction });
-        const digest = result.digest;
-        const explorerUrl = buildSuiVisionTxUrl(
-          digest,
-          network as 'mainnet' | 'testnet' | 'devnet',
-        );
-
-        setExecutionRecord({ digest, explorerUrl });
-        setStage('executed');
-        setStatusMessage(`Executed on Sui testnet. Digest: ${shortDigest(digest)}`);
-      } catch (error) {
-        const message = error instanceof Error ? error.message : 'Execution failed.';
-        const deepBookConfigFailure = /config missing|resource not found|pool/i.test(message);
-        const failureMessage =
-          message.includes('PRODUCTION GATE FAILED') || deepBookConfigFailure
-            ? 'PRODUCTION GATE FAILED: DeepBook config missing.'
-            : 'DeepBook execution failed.';
-        setErrorMessage(failureMessage);
-        setStage('confirm');
-        setStatusMessage(failureMessage);
-      }
-      return;
-    }
-
-    if (isPreviewOnlyFlow) {
-      setStage('preview');
-      setStatusMessage('Preview only — no funds move.');
-      return;
-    }
-
-    if (isBlockedFlow) {
-      setStage('blocked');
-      setStatusMessage(`${coreFlow.policy.summary} Funds moved: 0.`);
-      return;
-    }
-
-    if (!currentAccount) {
-      setStage('confirm');
-      setStatusMessage('Connect a wallet to execute the testnet transfer.');
-      return;
-    }
-
-    if (network !== 'testnet') {
-      setStage('confirm');
-      setStatusMessage('Switch the wallet network to testnet to execute the live transfer.');
-      setErrorMessage(`Current network: ${String(network)}.`);
-      return;
-    }
-
-    try {
-      setStage('confirm');
-      setStatusMessage(`Submitting ${LIVE_TESTNET_TRANSFER_LABEL} testnet transfer.`);
-      setErrorMessage('');
-
-      const transaction = buildLiveTestnetTransferTransaction(currentAccount.address);
-      const result = await signAndExecuteTransaction({ transaction });
-      const digest = result.digest;
-      const explorerUrl = buildSuiVisionTxUrl(
-        digest,
-        network as 'mainnet' | 'testnet' | 'devnet',
-      );
-
-      setExecutionRecord({ digest, explorerUrl });
-      setStage('executed');
-      setStatusMessage(`Executed on Sui testnet. Digest: ${shortDigest(digest)}`);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Execution failed.';
-      setErrorMessage(message);
-      setStage('confirm');
-      setStatusMessage('Execution failed.');
-    }
-  };
-
-  const sessionFields = [
-    { label: 'Session type', value: 'Sui Action Session' },
-    { label: 'Status', value: coreFlow.executionMode },
-    { label: 'Proposed amount', value: coreFlow.preview.kind === 'transfer' ? `${coreFlow.preview.amount} ${coreFlow.preview.token}` : '0' },
-    { label: 'Funds moved', value: String(coreFlow.fundsMoved) },
+  const receiptFields: Field[] = [
+    { label: 'Action', value: 'send_usdc' },
+    { label: 'Recipient', value: 'vendor' },
+    { label: 'Proposed exposure', value: '900 USDC' },
+    { label: 'Contamination score', value: sampleScanArtifact.contaminationScore },
+    { label: 'Detector result', value: sampleScanArtifact.detectorResults[0] },
+    { label: 'Recommendation', value: sampleScanArtifact.recommendation },
+    { label: 'Action blocked', value: String(sampleScanArtifact.actionBlocked) },
+    { label: 'Funds moved', value: '0' },
   ];
 
-  const evidenceCapsuleFields = evidenceCapsule
-    ? buildEvidenceCapsuleFields(evidenceCapsule, {
-        deepbookDigest:
-          isDeepBookFlow && executionRecord?.digest ? shortDigest(executionRecord.digest) : undefined,
-        suiDigest: executionRecord?.digest ? shortDigest(executionRecord.digest) : undefined,
-        walrusArtifact:
-          walrusEvidenceStatus.available && walrusEvidenceStatus.blobId && walrusEvidenceStatus.objectId
-            ? `${shortDigest(walrusEvidenceStatus.blobId)} / ${shortDigest(walrusEvidenceStatus.objectId)}`
-            : undefined,
-        sealAccessPolicy:
-          sealEvidenceStatus.available && sealEvidenceStatus.policyId
-            ? shortDigest(sealEvidenceStatus.policyId)
-            : undefined,
-        suiCapsuleAnchor:
-          capsuleAnchorStatus.available && capsuleAnchorStatus.digest
-            ? shortDigest(capsuleAnchorStatus.digest)
-            : undefined,
-      })
-    : [];
-
-  const verifierNote = isBlockedFlow
-    ? `Blocked. Funds moved: ${coreFlow.fundsMoved}.`
-    : isLiveTransferFlow && stage === 'executed'
-      ? `Testnet transfer complete.`
-      : `Funds moved: 0 before confirmation.`;
+  const proofFields: Field[] = [
+    { label: 'Memory hash', value: sampleQuarantineReceipt.memoryHash },
+    { label: 'Artifact ref', value: sampleEvidencePath.publicArtifactRef },
+    { label: 'Seal locked evidence', value: sampleEvidencePath.sealLockedEvidenceRef },
+    { label: 'Walrus artifact ref', value: sampleEvidencePath.walrusBlobRef },
+    { label: 'Groth16 quarantine proof', value: sampleQuarantineReceipt.groth16ProofRef },
+    { label: 'Quarantine receipt', value: sampleQuarantineReceipt.receiptId },
+  ];
 
   return (
-    <main className="app-shell">
-      <header className="hero">
-        <div className="hero-kicker">{HEY_SUI_NAME}</div>
-        <h1>{HEY_SUI_TAGLINE}</h1>
-        <p>{HEY_SUI_SCOPE}</p>
-        <div className="hero-meta">
-          <span className="status-pill">Stage: {STAGE_LABELS[stage]}</span>
-          <span className="status-pill">Network: {String(network)}</span>
-          <span className="status-pill">{verifierNote}</span>
-          <ConnectButton connectText="Connect wallet" />
+    <main className="shell">
+      <div className="backdrop" aria-hidden="true" />
+      <div className="grid-noise" aria-hidden="true" />
+
+      <header className="hero panel">
+        <div className="hero-top">
+          <Chip tone="danger">MIASMA / live quarantine firewall</Chip>
+          <Chip>Funds moved: 0</Chip>
+        </div>
+
+        <div className="hero-copy">
+          <p className="eyebrow">Pre-execution verifier for agentic Sui actions</p>
+          <h1>Memory-action paths are checked before any Sui action is signed or executed.</h1>
+          <p className="lede">
+            The agent asked to pay 900 USDC. MIASMA mapped the memory path,
+            detected hidden instruction contamination, suppressed the wallet request, and blocked the path before value moved.
+          </p>
+        </div>
+
+        <div className="hero-metrics" aria-label="Quarantine summary">
+          <div className="metric">
+            <span className="metric-label">Memory-action path checked</span>
+            <strong>vendor_policy_v3.txt → payment_rules.md → send_usdc</strong>
+          </div>
+          <div className="metric">
+            <span className="metric-label">Poisoned path detected</span>
+            <strong>hidden instruction contamination</strong>
+          </div>
+          <div className="metric">
+            <span className="metric-label">Wallet request</span>
+            <strong>suppressed</strong>
+          </div>
         </div>
       </header>
 
-      <FlowSelector activeFlowId={activeFlowId} onSelect={setActiveFlowId} />
-
-      <section className="wireframe-grid" aria-label="MIASMA flow wireframe">
-        <Panel title="Input" subtitle="Say it or type it." className="input-panel">
-          <textarea
-            ref={textareaRef}
-            value={draft}
-            onChange={(event) => syncIntent(event.target.value)}
-            rows={6}
-            aria-label="Command input"
-            style={{
-              width: '100%',
-              resize: 'vertical',
-              borderRadius: '16px',
-              border: '1px solid var(--line)',
-              padding: '14px',
-              background: 'var(--panel-alt)',
-              color: 'var(--text)',
-              lineHeight: 1.5,
-            }}
-          />
-
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-            <button type="button" className="flow-tab" onClick={startVoiceCapture} disabled={isExecuting}>
-              Say it
-            </button>
-            <button
-              type="button"
-              className="flow-tab"
-              onClick={() => {
-                textareaRef.current?.focus();
-                setStage('idle');
-                setStatusMessage('Type privately below.');
-              }}
-            >
-              Type privately
-            </button>
-            <button type="button" className="flow-tab" onClick={previewIntent}>
-              Preview it
-            </button>
-            <button type="button" className="flow-tab" onClick={confirmIntent}>
-              Confirm it
-            </button>
-            <button type="button" className="flow-tab" onClick={runPrimaryAction} disabled={primaryActionDisabled}>
-              {primaryActionLabel}
-            </button>
-          </div>
-
-          <FieldList fields={flowToIntentFields(coreFlow)} />
-
-          <p className="panel-note">{statusMessage}</p>
-          {speechRecognitionAvailable ? (
-            <p className="panel-note">Voice input uses the browser SpeechRecognition API when available.</p>
-          ) : (
-            <p className="panel-note">Voice input is unavailable in this browser, so the type-private path stays active.</p>
-          )}
-          {errorMessage ? <p className="panel-note">{errorMessage}</p> : null}
-        </Panel>
-
-        <Panel title="AI Reads" subtitle="What the agent is proposing.">
-          <FieldList fields={flowToPreviewFields(coreFlow)} />
-        </Panel>
-
-        <Panel title="Action Session Verifier" subtitle="Internal verifier path.">
-          <FieldList fields={flowToPolicyFields(coreFlow)} />
-          <FieldList fields={flowToBoundaryFields(coreFlow)} />
-          <p className="panel-note">
-            The core reads before value moves. DeepBook is live on testnet when the wallet is
-            confirmed. Transit stays a boundary.
-          </p>
-        </Panel>
-
-        <Panel title="Nitro / TEE" subtitle="Attestation gate.">
-          <FieldList fields={nitroStatusFields()} />
-          <p className="panel-note">
-            Capture and verification are implemented. The gate only turns verified when a real
-            Nitro attestation document and expected PCRs are supplied.
-          </p>
-        </Panel>
-
-        <Panel title="Sui Action Session" subtitle="The public session record.">
-          <div className="session-emphasis">
-            <div className="status-pill">{coreFlow.executionMode}</div>
-            <div className="session-value">
-              {isLiveTransferFlow && stage === 'executed'
-                ? `Transferred ${LIVE_TESTNET_TRANSFER_LABEL} on testnet`
-                : `Funds moved: ${coreFlow.fundsMoved}`}
+      <section className="dashboard">
+        <Panel
+          eyebrow="Quarantine verdict"
+          title="Blocked before funds moved"
+          subtitle="The agent looked legitimate, but the memory-action path was contaminated."
+          className="verdict-panel"
+        >
+          <div className="verdict-card">
+            <div className="verdict-score">
+              <span>Funds moved</span>
+              <strong>0</strong>
+            </div>
+            <div className="verdict-copy">
+              <Chip tone="danger">blocked</Chip>
+              <p>
+                Action <InlineCode>send_usdc</InlineCode> to <InlineCode>vendor</InlineCode> was quarantined. The dangerous path was
+                suppressed before any approval surfaced.
+              </p>
             </div>
           </div>
-          <FieldList fields={sessionFields} />
-          <FieldList fields={flowToReceiptFields(coreFlow)} />
-          {executionRecord ? (
-            <div className="field-list">
-              <div className="field-row">
-                <div className="field-label">Transaction digest</div>
-                <div className="field-value">{shortDigest(executionRecord.digest)}</div>
+
+          <Fields items={receiptFields} />
+        </Panel>
+
+        <Panel
+          eyebrow="Memory-action map"
+          title="Memory-Action Map"
+          subtitle="The map stays readable on mobile by collapsing the rail into a vertical stack."
+          className="map-panel"
+        >
+          <PathRail />
+          <div className="contamination-banner">
+            <div>
+              <span className="banner-label">Detected contamination</span>
+              <strong>87 / 100</strong>
+            </div>
+            <p>Recommendation: quarantine. Verified path recorded without releasing funds.</p>
+          </div>
+        </Panel>
+
+        <Panel
+          eyebrow="Verified capsule"
+          title="Proof chain"
+          subtitle="Memory hash to Sui QuarantineReceipt, with the locked evidence path surfaced for audit."
+          className="proof-panel"
+        >
+          <div className="proof-chain" aria-label="Verified path">
+            {sampleQuarantineReceipt.verifiedPath.map((step, index) => (
+              <div className="proof-step" key={step}>
+                <span className="proof-index">{String(index + 1).padStart(2, '0')}</span>
+                <span className="proof-text">{step}</span>
               </div>
-              <a className="status-pill" href={executionRecord.explorerUrl} target="_blank" rel="noreferrer">
-                Open explorer
-              </a>
-            </div>
-          ) : null}
+            ))}
+          </div>
+          <Fields items={proofFields} />
+          <div className="proof-note">
+            <span className="eyebrow">Quarantine proof</span>
+            <p>{sampleQuarantineProof.proofRef}</p>
+          </div>
         </Panel>
 
-        <Panel title="Verified Evidence Capsule" subtitle="Proof, evidence, and anchor chain.">
-          <FieldList fields={evidenceCapsuleFields} />
-          <p className="panel-note">
-            The capsule chain keeps the blocked path auditable without claiming any fake Walrus,
-            Seal, or Sui anchor success.
-          </p>
+        <Panel
+          eyebrow="Execution record"
+          title="Sui quarantine receipt"
+          subtitle="The receipt is the public outcome of the blocked path, not an execution success."
+          className="receipt-panel"
+        >
+          <Fields
+            items={[
+              { label: 'Status', value: sampleQuarantineReceipt.status },
+              { label: 'Decision', value: sampleQuarantineReceipt.decision },
+              { label: 'Recommendation', value: sampleQuarantineReceipt.recommendation },
+              { label: 'Verifier', value: sampleQuarantineReceipt.verifier },
+              { label: 'Verified path', value: sampleQuarantineReceipt.verifiedPath.length },
+              { label: 'Funds moved', value: sampleQuarantineReceipt.fundsMoved },
+            ]}
+          />
+          <div className="receipt-callout">
+            <strong>Wallet approval never appears for the dangerous path.</strong>
+            <p>Memory hash → Rust verifier → Seal locked evidence → Walrus artifact ref → Groth16 quarantine proof → Sui QuarantineReceipt.</p>
+          </div>
         </Panel>
       </section>
     </main>

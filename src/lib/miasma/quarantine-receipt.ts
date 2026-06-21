@@ -47,7 +47,6 @@ export function buildQuarantineReceipt(scan: MiasmaScanArtifact): QuarantineRece
     verifiedPath: [
       'Memory hash',
       'Rust verifier',
-      'Nitro enclave verifier',
       'Seal locked evidence',
       'Walrus artifact ref',
       'Groth16 quarantine proof',

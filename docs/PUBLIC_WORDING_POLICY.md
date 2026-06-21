@@ -44,7 +44,7 @@ Use strong but honest phrases such as:
 | planned integration | interface defined |
 | not implemented | outside current implementation boundary |
 
-For Seal, Walrus, Nitro, Groth16, and MCP, do not overclaim. Prefer:
+For Seal, Walrus, Groth16, and MCP, do not overclaim. Prefer:
 
 - interface defined
 - boundary implemented
@@ -55,4 +55,3 @@ For Seal, Walrus, Nitro, Groth16, and MCP, do not overclaim. Prefer:
 ## Approved public summary
 
 “MIASMA is locally operational across its documented memory-action verification path. The canonical evaluation scenario is fixed, the verifier boundary is implemented, the skill firewall is wired, the Sui QuarantineReceipt module builds, and the evidence-lock, artifact-reference, proof, enclave, and tool-interface surfaces are defined as implementation boundaries.”
-
