@@ -1,0 +1,216 @@
+name: MIASMA Verification Surfaces
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  miasma-groth16-quarantine-proof:
+    name: miasma-groth16-quarantine-proof
+    runs-on: ubuntu-latest
+    environment: miasma-groth16-quarantine-proof
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject active transfer methods
+        run: |
+          set -euo pipefail
+          if grep -R -n \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            -e 'transferObjects' \
+            -e 'splitCoins' \
+            -e 'paySui' \
+            -e 'payAllSui' \
+            index.html README.md docs scripts contracts package.json; then
+            echo "Forbidden transfer method found in active MIASMA paths."
+            exit 1
+          fi
+      - name: Verify Groth16 surface scripts
+        run: |
+          grep -q '"zk:build"' package.json
+          grep -q '"zk:prove"' package.json
+          grep -q '"zk:verify"' package.json
+          grep -R -n -E 'Groth16|quarantine proof|quarantine-proof' README.md docs src scripts contracts 2>/dev/null
+      - run: npm run build
+
+  miasma-seal-evidence-capsule:
+    name: miasma-seal-evidence-capsule
+    runs-on: ubuntu-latest
+    environment: miasma-seal-evidence-capsule
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject active transfer methods
+        run: |
+          set -euo pipefail
+          if grep -R -n \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            -e 'transferObjects' \
+            -e 'splitCoins' \
+            -e 'paySui' \
+            -e 'payAllSui' \
+            index.html README.md docs scripts contracts package.json; then
+            echo "Forbidden transfer method found in active MIASMA paths."
+            exit 1
+          fi
+      - name: Verify Seal evidence surfaces
+        run: |
+          grep -q '"evidence:seal"' package.json
+          test -f scripts/seal-evidence.mjs
+          grep -R -n -E 'Seal evidence path|Evidence Capsule' README.md docs 2>/dev/null
+      - run: npm run build
+
+  miasma-walrus-artifact-anchor:
+    name: miasma-walrus-artifact-anchor
+    runs-on: ubuntu-latest
+    environment: miasma-walrus-artifact-anchor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject active transfer methods
+        run: |
+          set -euo pipefail
+          if grep -R -n \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            -e 'transferObjects' \
+            -e 'splitCoins' \
+            -e 'paySui' \
+            -e 'payAllSui' \
+            index.html README.md docs scripts contracts package.json; then
+            echo "Forbidden transfer method found in active MIASMA paths."
+            exit 1
+          fi
+      - name: Verify Walrus anchor surfaces
+        run: |
+          grep -q '"evidence:walrus"' package.json
+          grep -q '"evidence:anchor"' package.json
+          test -f scripts/walrus-upload-evidence.mjs
+          test -f scripts/anchor-capsule.mjs
+          grep -R -n -E 'Walrus artifact reference|Walrus artifact ref' README.md docs 2>/dev/null
+      - run: npm run build
+
+  miasma-sui-move-receipt:
+    name: miasma-sui-move-receipt
+    runs-on: ubuntu-latest
+    environment: miasma-sui-move-receipt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject active transfer methods
+        run: |
+          set -euo pipefail
+          if grep -R -n \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            -e 'transferObjects' \
+            -e 'splitCoins' \
+            -e 'paySui' \
+            -e 'payAllSui' \
+            index.html README.md docs scripts contracts package.json; then
+            echo "Forbidden transfer method found in active MIASMA paths."
+            exit 1
+          fi
+      - name: Verify Sui receipt surfaces
+        run: |
+          test -f contracts/miasma_receipt/Move.toml
+          test -f contracts/miasma_receipt/sources/miasma_receipt.move
+          test -f scripts/record_receipt.ts
+          grep -q '"sui:receipt:build"' package.json
+          grep -q '"sui:receipt:record"' package.json
+      - run: npm run build
+
+  miasma-memory-action-verifier:
+    name: miasma-memory-action-verifier
+    runs-on: ubuntu-latest
+    environment: miasma-memory-action-verifier
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject active transfer methods
+        run: |
+          set -euo pipefail
+          if grep -R -n \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            -e 'transferObjects' \
+            -e 'splitCoins' \
+            -e 'paySui' \
+            -e 'payAllSui' \
+            index.html README.md docs scripts contracts package.json; then
+            echo "Forbidden transfer method found in active MIASMA paths."
+            exit 1
+          fi
+      - name: Verify memory-action surfaces
+        run: |
+          grep -R -n -E 'memory-action path|poisoned memory|sliced exposure|blocked before wallet approval' README.md docs 2>/dev/null
+          test -f public/samples/poisoned-memory-sliced-exposure.txt
+          test -f public/samples/poisoned-memory-sliced-exposure.md
+          test -f public/samples/poisoned-memory-sliced-exposure.json
+      - run: npm run build
+
+  miasma-wallet-standard-boundary:
+    name: miasma-wallet-standard-boundary
+    runs-on: ubuntu-latest
+    environment: miasma-wallet-standard-boundary
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Reject active transfer methods
+        run: |
+          set -euo pipefail
+          if grep -R -n \
+            --exclude-dir=.git \
+            --exclude-dir=node_modules \
+            --exclude-dir=dist \
+            --exclude-dir=build \
+            -e 'transferObjects' \
+            -e 'splitCoins' \
+            -e 'paySui' \
+            -e 'payAllSui' \
+            index.html README.md docs scripts contracts package.json; then
+            echo "Forbidden transfer method found in active MIASMA paths."
+            exit 1
+          fi
+      - name: Verify wallet boundary surfaces
+        run: |
+          grep -R -n -E 'Wallet Standard|wallet approval suppression' README.md docs 2>/dev/null
+          ! grep -q 'src/main.tsx' index.html
+          ! grep -q 'id="root"' index.html
+      - run: npm run build
