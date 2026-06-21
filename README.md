@@ -6,8 +6,6 @@
 
 **Agentic memory-action firewall for Sui agents**
 
-</div>
-
 The agent was not hacked at execution.  
 It was poisoned in memory.
 
@@ -30,6 +28,8 @@ Sui is the settlement and receipt layer for the blocked decision and the public 
   <img src="https://img.shields.io/static/v1?label=SEAL_EVIDENCE_PATH&message=configured_path&color=9B72FF&labelColor=111820" />
   <img src="https://img.shields.io/static/v1?label=GROTH16_QUARANTINE_PROOF&message=proof_path&color=FFB24A&labelColor=111820" />
 </p>
+
+</div>
 
 ---
 
