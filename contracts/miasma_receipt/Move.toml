@@ -1,0 +1,7 @@
+[package]
+name = "miasma_receipt"
+version = "0.0.1"
+edition = "2024.beta"
+
+[addresses]
+miasma_receipt = "0x0"
