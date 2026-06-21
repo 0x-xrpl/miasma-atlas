@@ -14,6 +14,9 @@
     "evidence:seal": "node scripts/seal-evidence.mjs",
     "evidence:walrus": "node scripts/walrus-upload-evidence.mjs",
     "evidence:anchor": "node scripts/anchor-capsule.mjs",
+    "sui:receipt:build": "sui move build --path contracts/miasma_receipt",
+    "sui:receipt:publish": "sui client publish --path contracts/miasma_receipt",
+    "sui:receipt:record": "node --experimental-strip-types scripts/record_receipt.ts",
     "preview": "vite preview",
     "move:build": "sui move build --path move"
   },
