@@ -1,6 +1,6 @@
 # Threat Model
 
-Miasma Atlas focuses on pre-execution memory-action quarantine for agent skills.
+MIASMA focuses on pre-execution memory-action quarantine for agent skills.
 
 This threat model complements [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md) and keeps the public documentation aligned with the runtime semantics.
 
@@ -26,7 +26,7 @@ This threat model complements [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md
 - full formal verification
 - production KMS enforcement
 - real-time cross-agent collusion
-- production Seal / Walrus / Nitro deployment
+- production Seal / Walrus deployment
 
 ## Security boundary
 
@@ -39,4 +39,4 @@ The current evaluation surface is honest about its boundaries:
 - local verifier is real
 - receipt and proof layers are implemented where noted
 - no production on-chain mint is claimed
-- no production enclave or ZK proof is claimed
+- no production isolated runtime or ZK proof is claimed

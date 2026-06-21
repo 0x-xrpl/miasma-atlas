@@ -1,6 +1,6 @@
 # Agent Runtime
 
-Miasma Atlas is a pre-execution safety layer for agentic finance.
+MIASMA is a pre-execution safety layer for agentic finance.
 
 The runtime vocabulary for the first screen is:
 

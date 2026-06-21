@@ -1,5 +1,5 @@
 #!/bin/sh
 set -eu
 
-echo "Miasma Atlas Nitro verifier scaffold"
+echo "MIASMA Nitro verifier scaffold"
 

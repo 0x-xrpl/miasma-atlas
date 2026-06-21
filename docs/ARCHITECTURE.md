@@ -1,6 +1,6 @@
-# Miasma Atlas Architecture
+# MIASMA Architecture
 
-Miasma Atlas is an agentic memory-action firewall for Sui agents. It verifies the memory path that caused an agent action before the skill executes. If the path is poisoned, Miasma blocks the action, locks evidence, records a receipt, and keeps funds moved at `0`.
+MIASMA is an agentic memory-action firewall for Sui agents. It verifies the memory path that caused an agent action before the skill executes. If the path is poisoned, MIASMA blocks the action, locks evidence, records a receipt, and keeps funds moved at `0`.
 
 For the public requirements, evaluation language, and visual hierarchy, see [docs/FINAL_REQUIREMENTS.md](FINAL_REQUIREMENTS.md).
 
@@ -26,10 +26,6 @@ For the public requirements, evaluation language, and visual hierarchy, see [doc
 - Models Seal-locked evidence.
 - Models Walrus artifact references.
 - Keeps raw memory hidden.
-
-### Nitro Target Layer
-- Defines the isolated Nitro Enclave execution target.
-- Describes the same verifier boundary running inside an enclave.
 
 ### Groth16 Proof Layer
 - Scopes proof to the quarantine threshold rule only.
@@ -64,7 +60,6 @@ Agent SkillUseRequest
 - Sui QuarantineReceipt frontend model
 - Sui Move QuarantineReceipt module
 - Seal / Walrus evidence path boundary
-- Nitro verifier target boundary
 - Groth16 quarantine proof boundary
 - Agent Runtime / Skill Firewall boundary
 - MCP interface docs
@@ -73,7 +68,6 @@ Agent SkillUseRequest
 
 - Seal encryption path
 - Walrus artifact routing
-- Nitro execution target
 - Groth16 proof layer
 - MCP interface transport
 - frontend on-chain mint wiring
@@ -82,7 +76,6 @@ Agent SkillUseRequest
 
 - Production Seal encryption is not live
 - Real Walrus upload is not live
-- Nitro CLI was unavailable locally
 - Groth16 proof is a sample implementation of the threshold-rule surface
 - MCP transport is not live
 - No fake transaction digest

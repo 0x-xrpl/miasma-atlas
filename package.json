@@ -1,26 +1,40 @@
 {
-  "name": "miasma-atlas",
+  "name": "miasma",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc --noEmit -p tsconfig.json && tsc --noEmit -p tsconfig.node.json && vite build",
+    "check:core": "node scripts/core-smoke.mjs",
+    "zk:build": "node scripts/zk-groth16.mjs build",
+    "zk:prove": "node scripts/zk-groth16.mjs prove",
+    "zk:verify": "node scripts/zk-groth16.mjs verify",
+    "evidence:capsule": "node scripts/evidence-capsule.mjs",
+    "evidence:seal": "node scripts/seal-evidence.mjs",
+    "evidence:walrus": "node scripts/walrus-upload-evidence.mjs",
+    "evidence:anchor": "node scripts/anchor-capsule.mjs",
     "preview": "vite preview",
     "move:build": "sui move build --path move"
   },
   "dependencies": {
     "@mysten/dapp-kit": "1.0.6",
-    "@mysten/sui": "2.16.3",
+    "@mysten/deepbook-v3": "^0.28.3",
+    "@mysten/seal": "^1.2.1",
+    "@mysten/sui": "^2.19.0",
+    "@mysten/walrus": "^1.2.1",
     "@tanstack/react-query": "5.100.11",
+    "cbor": "^10.0.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/node": "^24.1.0",
     "@types/react": "^19.1.4",
     "@types/react-dom": "^19.1.4",
-    "@types/node": "^24.1.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
+    "circom": "^0.5.46",
+    "snarkjs": "^0.7.6",
     "typescript": "^5.8.3",
     "vite": "^6.3.5"
   }

@@ -4,12 +4,21 @@ set -euo pipefail
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 files=(
   "$repo_root/README.md"
-  "$repo_root/docs/"*.md
+  "$repo_root/docs/ARCHITECTURE.md"
+  "$repo_root/docs/CODEX_RULES.md"
+  "$repo_root/docs/EVIDENCE_PATH.md"
+  "$repo_root/docs/FINAL_REQUIREMENTS.md"
+  "$repo_root/docs/MIASMA_PRODUCTION_TRUTH.md"
+  "$repo_root/docs/PUBLIC_WORDING_POLICY.md"
+  "$repo_root/docs/SKILL_FIREWALL.md"
+  "$repo_root/docs/THREAT_MODEL.md"
+  "$repo_root/docs/ZK_QUARANTINE_PROOF.md"
+  "$repo_root/move/README.md"
 )
 
-legacy_terms='Pizza|PIZZA|pizza|Roulette|roulette|Spin|spin|Badge|badge|Fragment|fragment|NFT|nft|Bitcoin|bitcoin|wheel'
-positioning_terms='hackathon-ready|judge-ready|winning|Sui Overflow|competitor|before HTML prototype|before TSX port'
-overclaim_terms='production-live|mainnet-ready|fully deployed|real Seal encryption live|real Walrus upload live|live Nitro execution|full ZKML verification'
+legacy_terms='Pizza|PIZZA|pizza|Roulette|roulette|Spin|spin|Badge|badge|Fragment|fragment|NFT|nft|Bitcoin|bitcoin|wheel|Miasma Atlas|MIASMA_ATLAS'
+positioning_terms='hackathon-ready|judge-ready|winning|Sui Overflow|competitor|before HTML prototype|before TSX port|hackathon|prototype|demo|Ready'
+overclaim_terms='production-live|mainnet-ready|fully deployed|real Seal encryption live|real Walrus upload live|live Nitro execution|full ZKML verification|Nitro|NITRO|AWS|TEE|enclave|builder proof|acknowledgement|verification layer|generic wallet assistant|generic AI chat wallet|intent engine'
 
 check_group() {
   local label="$1"

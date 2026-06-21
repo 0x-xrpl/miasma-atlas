@@ -1,4 +1,4 @@
-# Miasma Move Package
+# MIASMA Move Package
 
 This package defines the minimal on-chain `QuarantineReceipt` object for pre-execution quarantine decisions.
 
@@ -10,4 +10,4 @@ It is intentionally small:
 - the module emits a `QuarantineReceiptCreated` event
 - the receipt fields line up with the local `MiasmaScanArtifact` and frontend scaffold
 
-Later, this object can be linked to Seal, Walrus, Groth16, and Nitro without changing the core meaning of the receipt.
+This object can be linked to Seal, Walrus, and Groth16 without changing the core meaning of the receipt.

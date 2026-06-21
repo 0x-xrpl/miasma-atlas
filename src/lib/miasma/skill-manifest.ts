@@ -23,7 +23,7 @@ export const demoSkillManifest: SkillManifest = {
   skillId: 'send_usdc',
   skillName: 'Send USDC',
   skillHash: 'skillhash_send_usdc_scaffold',
-  provider: 'Miasma Atlas',
+  provider: 'MIASMA',
   version: '0.1.0',
   riskTier: 'high',
   requiredPermissions: ['transfer:usdc', 'read:policy'],
