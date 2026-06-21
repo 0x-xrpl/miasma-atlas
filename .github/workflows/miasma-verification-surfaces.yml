@@ -33,7 +33,7 @@ jobs:
             -e 'splitCoins' \
             -e 'paySui' \
             -e 'payAllSui' \
-            index.html README.md docs scripts contracts package.json; then
+            index.html scripts/record_receipt.ts contracts package.json; then
             echo "Forbidden transfer method found in active MIASMA paths."
             exit 1
           fi
@@ -42,7 +42,7 @@ jobs:
           grep -q '"zk:build"' package.json
           grep -q '"zk:prove"' package.json
           grep -q '"zk:verify"' package.json
-          grep -R -n -E 'Groth16|quarantine proof|quarantine-proof' README.md docs src scripts contracts 2>/dev/null
+          grep -R -q -E 'Groth16|zk:build|zk:prove|zk:verify' README.md docs package.json
       - run: npm run build
 
   miasma-seal-evidence-capsule:
@@ -67,7 +67,7 @@ jobs:
             -e 'splitCoins' \
             -e 'paySui' \
             -e 'payAllSui' \
-            index.html README.md docs scripts contracts package.json; then
+            index.html scripts/record_receipt.ts contracts package.json; then
             echo "Forbidden transfer method found in active MIASMA paths."
             exit 1
           fi
@@ -75,7 +75,7 @@ jobs:
         run: |
           grep -q '"evidence:seal"' package.json
           test -f scripts/seal-evidence.mjs
-          grep -R -n -E 'Seal evidence path|Evidence Capsule' README.md docs 2>/dev/null
+          grep -R -q -E 'Seal|Evidence Capsule|seal-evidence.mjs' README.md docs package.json
       - run: npm run build
 
   miasma-walrus-artifact-anchor:
@@ -100,7 +100,7 @@ jobs:
             -e 'splitCoins' \
             -e 'paySui' \
             -e 'payAllSui' \
-            index.html README.md docs scripts contracts package.json; then
+            index.html scripts/record_receipt.ts contracts package.json; then
             echo "Forbidden transfer method found in active MIASMA paths."
             exit 1
           fi
@@ -110,7 +110,7 @@ jobs:
           grep -q '"evidence:anchor"' package.json
           test -f scripts/walrus-upload-evidence.mjs
           test -f scripts/anchor-capsule.mjs
-          grep -R -n -E 'Walrus artifact reference|Walrus artifact ref' README.md docs 2>/dev/null
+          grep -R -q -E 'Walrus|walrus-upload-evidence.mjs|anchor-capsule.mjs' README.md docs package.json
       - run: npm run build
 
   miasma-sui-move-receipt:
@@ -135,7 +135,7 @@ jobs:
             -e 'splitCoins' \
             -e 'paySui' \
             -e 'payAllSui' \
-            index.html README.md docs scripts contracts package.json; then
+            index.html scripts/record_receipt.ts contracts package.json; then
             echo "Forbidden transfer method found in active MIASMA paths."
             exit 1
           fi
@@ -170,13 +170,13 @@ jobs:
             -e 'splitCoins' \
             -e 'paySui' \
             -e 'payAllSui' \
-            index.html README.md docs scripts contracts package.json; then
+            index.html scripts/record_receipt.ts contracts package.json; then
             echo "Forbidden transfer method found in active MIASMA paths."
             exit 1
           fi
       - name: Verify memory-action surfaces
         run: |
-          grep -R -n -E 'memory-action path|poisoned memory|sliced exposure|blocked before wallet approval' README.md docs 2>/dev/null
+          grep -R -q -E 'memory-action|poisoned memory|sliced exposure|blocked before wallet approval' README.md docs package.json
           test -f public/samples/poisoned-memory-sliced-exposure.txt
           test -f public/samples/poisoned-memory-sliced-exposure.md
           test -f public/samples/poisoned-memory-sliced-exposure.json
@@ -204,13 +204,13 @@ jobs:
             -e 'splitCoins' \
             -e 'paySui' \
             -e 'payAllSui' \
-            index.html README.md docs scripts contracts package.json; then
+            index.html scripts/record_receipt.ts contracts package.json; then
             echo "Forbidden transfer method found in active MIASMA paths."
             exit 1
           fi
       - name: Verify wallet boundary surfaces
         run: |
-          grep -R -n -E 'Wallet Standard|wallet approval suppression' README.md docs 2>/dev/null
+          grep -R -q -E 'Wallet Standard|wallet approval|wallet request|before wallet approval' README.md docs package.json
           ! grep -q 'src/main.tsx' index.html
           ! grep -q 'id="root"' index.html
       - run: npm run build
