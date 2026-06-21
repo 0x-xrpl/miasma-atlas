@@ -559,11 +559,17 @@ contaminated cause chain
 
 ## Repository layout
 
-```txt
-miasma-atlas/
+<table>
+<tr>
+<td valign="top" width="50%">
+
+<strong>Application / Core / Verifier</strong>
+
+<pre><code>miasma-atlas/
 ├─ README.md
 ├─ index.html
 ├─ package.json
+├─ package-lock.json
 ├─ vite.config.ts
 ├─ src/
 │  ├─ App.tsx
@@ -591,20 +597,28 @@ miasma-atlas/
 │        ├─ skill-use-record.ts
 │        ├─ tool-permission-context.ts
 │        └─ walrus-artifact.ts
-├─ verifier/
-│  ├─ Cargo.toml
-│  ├─ fixtures/
-│  │  ├─ poisoned-memory.json
-│  │  └─ clean-memory.json
-│  └─ src/
-│     ├─ artifact.rs
-│     ├─ detectors.rs
-│     ├─ lib.rs
-│     ├─ main.rs
-│     ├─ scan.rs
-│     └─ tests.rs
+└─ verifier/
+   ├─ Cargo.toml
+   ├─ fixtures/
+   │  ├─ poisoned-memory.json
+   │  └─ clean-memory.json
+   └─ src/
+      ├─ artifact.rs
+      ├─ detectors.rs
+      ├─ lib.rs
+      ├─ main.rs
+      ├─ scan.rs
+      └─ tests.rs</code></pre>
+
+</td>
+<td valign="top" width="50%">
+
+<strong>Move / Docs / Scripts</strong>
+
+<pre><code>miasma-atlas/
 ├─ move/
 │  ├─ Move.toml
+│  ├─ README.md
 │  └─ sources/
 │     └─ quarantine_receipt.move
 ├─ docs/
@@ -617,10 +631,48 @@ miasma-atlas/
 │  ├─ EVIDENCE_PATH.md
 │  ├─ ZK_QUARANTINE_PROOF.md
 │  ├─ SKILL_FIREWALL.md
-│  └─ MCP_INTERFACE.md
+│  ├─ MCP_INTERFACE.md
+│  ├─ VERIFIER_PATH.md
+│  ├─ CODEX_RULES.md
+│  ├─ MIASMA_PRODUCTION_TRUTH.md
+│  └─ archive/
+│     └─ archived internal research note
+├─ mcp/
+├─ nitro/
+├─ infra/nitro/
+├─ zk/
 └─ scripts/
-   └─ check-public-wording.sh
-```
+   ├─ check-public-wording.sh
+   ├─ tee-verify.mjs
+   ├─ core-smoke.mjs
+   ├─ evidence-capsule.mjs
+   ├─ seal-evidence.mjs
+   ├─ walrus-upload-evidence.mjs
+   ├─ anchor-capsule.mjs
+   └─ zk-groth16.mjs</code></pre>
+
+</td>
+</tr>
+</table>
+
+## Key implementation surfaces
+
+| Surface | Path | Role |
+| --- | --- | --- |
+| Product UI | `src/App.tsx` | Main MIASMA interface and product walkthrough. Shows the agent action, Memory-Action Map, quarantine proof, Skill Firewall state, and funds moved result. |
+| Sui constants | `src/sui.ts` | Keeps Sui network and explorer helpers separate from the product UI. Public product name is `MIASMA`. |
+| Memory-action model | `src/lib/miasma/memory-action-context.ts` | Defines the structured cause object behind an agentic Sui action. |
+| Scan artifact model | `src/lib/miasma/scan-artifact.ts` | Defines the `MiasmaScanArtifact` result emitted by the verifier path. |
+| Evidence path | `src/lib/miasma/evidence-path.ts` | Models the Evidence Capsule path, public artifact reference, restricted evidence, Seal path, Walrus reference, and proof references. |
+| Quarantine receipt | `src/lib/miasma/quarantine-receipt.ts` | Models the blocked-decision receipt and `fundsMoved: 0` result. |
+| Skill boundary | `src/lib/miasma/skill-manifest.ts` / `src/lib/miasma/skill-use-record.ts` | Defines the protected skill, permissions, memory dependencies, and blocked skill-use record. |
+| Shadow execution | `src/lib/miasma/shadow-execution.ts` | Models simulated evaluation while real execution remains blocked. |
+| Agent flight record | `src/lib/miasma/agent-flight-recorder.ts` / `src/lib/miasma/agent-runtime.ts` | Records the agent execution path from observation through gate, receipt, and learning. |
+| Local verifier | `verifier/src/*` | Rust verifier, detector logic, parser, scan analyzer, artifact output, CLI entry, and tests. |
+| Verifier fixtures | `verifier/fixtures/*` | Poisoned and clean memory samples used for deterministic scan checks. |
+| Sui receipt module | `move/sources/quarantine_receipt.move` | Move module for the Sui quarantine receipt / clean capsule anchor surface. |
+| Public docs | `docs/*.md` | Architecture, requirements, threat model, evidence path, skill firewall, ZK proof path, and evaluation materials. |
+| Public wording policy | `docs/PUBLIC_WORDING_POLICY.md` / `scripts/check-public-wording.sh` | Enforces public wording safety and prevents old or overclaimed positioning from returning. |
 
 ---
 
