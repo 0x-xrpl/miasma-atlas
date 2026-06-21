@@ -733,7 +733,7 @@ contaminated cause chain
 | Surface | Path | Role |
 | --- | --- | --- |
 | Product UI | `src/App.tsx` | Main MIASMA interface and product walkthrough. Shows the agent action, Memory-Action Map, quarantine proof, Skill Firewall state, and funds moved result. |
-| Sui constants | `src/sui.ts` | Keeps Sui network and explorer helpers separate from the product UI. Public product name is `MIASMA`. |
+| Safe Sui receipt flow | `contracts/miasma_receipt` / `scripts/record_receipt.ts` / `docs/SUI_RECEIPT_FLOW.md` | Safe Testnet receipt package, recording helper, and operational notes for blocked scans. |
 | Memory-action model | `src/lib/miasma/memory-action-context.ts` | Defines the structured cause object behind an agentic Sui action. |
 | Scan artifact model | `src/lib/miasma/scan-artifact.ts` | Defines the `MiasmaScanArtifact` result emitted by the verifier path. |
 | Evidence path | `src/lib/miasma/evidence-path.ts` | Models the Evidence Capsule path, public artifact reference, restricted evidence, Seal path, Walrus reference, and proof references. |
