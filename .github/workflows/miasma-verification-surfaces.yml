@@ -14,13 +14,13 @@ jobs:
   miasma-groth16-quarantine-proof:
     name: miasma-groth16-quarantine-proof
     runs-on: ubuntu-latest
-    environment: miasma-groth16-quarantine-proof
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: npm
+      - run: npm install
       - name: Reject active transfer methods
         run: |
           set -euo pipefail
@@ -48,13 +48,13 @@ jobs:
   miasma-seal-evidence-capsule:
     name: miasma-seal-evidence-capsule
     runs-on: ubuntu-latest
-    environment: miasma-seal-evidence-capsule
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: npm
+      - run: npm install
       - name: Reject active transfer methods
         run: |
           set -euo pipefail
@@ -81,13 +81,13 @@ jobs:
   miasma-walrus-artifact-anchor:
     name: miasma-walrus-artifact-anchor
     runs-on: ubuntu-latest
-    environment: miasma-walrus-artifact-anchor
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: npm
+      - run: npm install
       - name: Reject active transfer methods
         run: |
           set -euo pipefail
@@ -116,13 +116,13 @@ jobs:
   miasma-sui-move-receipt:
     name: miasma-sui-move-receipt
     runs-on: ubuntu-latest
-    environment: miasma-sui-move-receipt
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: npm
+      - run: npm install
       - name: Reject active transfer methods
         run: |
           set -euo pipefail
@@ -151,13 +151,13 @@ jobs:
   miasma-memory-action-verifier:
     name: miasma-memory-action-verifier
     runs-on: ubuntu-latest
-    environment: miasma-memory-action-verifier
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: npm
+      - run: npm install
       - name: Reject active transfer methods
         run: |
           set -euo pipefail
@@ -185,13 +185,13 @@ jobs:
   miasma-wallet-standard-boundary:
     name: miasma-wallet-standard-boundary
     runs-on: ubuntu-latest
-    environment: miasma-wallet-standard-boundary
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20'
           cache: npm
+      - run: npm install
       - name: Reject active transfer methods
         run: |
           set -euo pipefail
