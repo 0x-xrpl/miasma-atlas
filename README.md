@@ -36,7 +36,7 @@ Sui is the settlement and receipt layer for the blocked decision and the public 
 ## Five-second evaluation
 
 ```txt
-Agent wants to pay 900 USDC.
+Agent wants to pay 1,000 USDC.
 Memory path: vendor_policy_v3.txt -> payment_rules.md -> send_usdc.
 Hidden instruction contamination detected.
 Wallet request: suppressed.
@@ -62,7 +62,7 @@ The dangerous instruction may not be inside the transaction itself. It can be hi
 
 MIASMA checks the memory-action path before wallet approval. If the path is contaminated, MIASMA suppresses the wallet request, emits a structured Evidence Capsule, and leaves the dangerous action without a digest.
 
-**Projected exposure: 900 USDC**  
+**Projected exposure: 1,000 USDC**  
 **Wallet request: suppressed**  
 **Wallet approval: not requested**  
 **Signature: not requested**  
@@ -306,7 +306,7 @@ Expected blocked result:
 decision: BLOCKED
 reason: hidden instruction contamination in memory-action path
 sample: poisoned-memory
-proposedAmount: 900 USDC
+proposedAmount: 1,000 USDC
 contaminationScore: 87
 recommendation: quarantine
 walletApproval: not requested
@@ -357,7 +357,7 @@ The Evidence Capsule is the proof object created instead of the dangerous transa
   "confirmationRequired": false,
   "contaminationScore": 87,
   "threshold": 80,
-  "projectedExposure": "900 USDC",
+  "projectedExposure": "1,000 USDC",
   "recommendation": "quarantine",
   "walletApproval": "not_requested",
   "walletRequest": "suppressed",
@@ -408,7 +408,7 @@ type MiasmaMemoryActionContext = {
 Sample context:
 
 ```txt
-agent: Agent wants to pay 900 USDC
+agent: Agent wants to pay 1,000 USDC
 skillId: send_usdc
 intent: Pay vendor
 asset: USDC
@@ -437,7 +437,7 @@ Required blocked output:
 
 ```txt
 actionBlocked: true
-proposedAmount: 900
+proposedAmount: 1000
 contaminationScore: 87
 fundsMoved: 0
 recommendation: quarantine
@@ -726,7 +726,7 @@ Expected poisoned output:
     "hidden instruction contamination",
     "Pay Vendor"
   ],
-  "proposedAmount": 900,
+  "proposedAmount": 1000,
   "contaminationScore": 87,
   "actionBlocked": true,
   "fundsMoved": 0,
