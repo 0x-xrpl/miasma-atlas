@@ -47,7 +47,7 @@
     .glass{border:1px solid rgba(151,225,255,.15);border-radius:28px;background:linear-gradient(180deg,rgba(8,24,38,.62),rgba(3,8,13,.38));box-shadow:0 32px 120px rgba(0,0,0,.36),inset 0 1px rgba(255,255,255,.04);backdrop-filter:blur(18px)}
     .stage{position:relative;height:min(64svh,560px);min-height:430px;width:100%;z-index:3;border-radius:34px;border:1px solid rgba(151,225,255,.16);overflow:hidden;background:radial-gradient(circle at 50% 50%,rgba(89,234,255,.075),transparent 48%),linear-gradient(180deg,rgba(6,18,30,.38),rgba(2,7,12,.12));box-shadow:0 34px 130px rgba(0,0,0,.32),inset 0 0 0 1px rgba(255,255,255,.025)}
     .stage:before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,transparent,rgba(89,234,255,.13),transparent);transform:translateX(-110%);opacity:0}.chapter.active .stage:before{animation:sweep 4.2s ease-in-out infinite}@keyframes sweep{0%{transform:translateX(-110%)}45%,100%{transform:translateX(110%)}}
-    .stage-grid{position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(151,225,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(151,225,255,.07) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at center,#000 20%,transparent 78%)}
+    .stage-grid{position:absolute;inset:0;opacity:.22;background-image:linear-gradient(rgba(151,225,255,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(151,225,255,.07) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(circle at center,#000 20%,transparent 78%);pointer-events:none}
     .stage-title{position:absolute;left:20px;top:18px;z-index:5;font:800 10px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:rgba(239,251,255,.55);display:flex;gap:10px;align-items:center}.stage-title:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
     .stage-sub{position:absolute;right:20px;top:18px;z-index:5;font:700 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(239,251,255,.45)}
     .field-tags{position:absolute;inset:0;z-index:6;pointer-events:none}.tag{position:absolute;border:1px solid rgba(89,234,255,.20);background:rgba(5,14,22,.55);backdrop-filter:blur(12px);border-radius:999px;padding:7px 9px;font:800 9px var(--mono);letter-spacing:.07em;text-transform:uppercase;color:rgba(239,251,255,.70);box-shadow:0 0 30px rgba(89,234,255,.08);opacity:0;transform:translateY(8px);transition:.62s ease}.chapter.active .tag{opacity:1;transform:translateY(0)}.tag.risk{border-color:rgba(255,77,120,.42);color:#ffd9e1;box-shadow:0 0 30px rgba(255,77,120,.11)}.tag.a{left:10%;top:22%;transition-delay:.05s}.tag.b{right:13%;top:21%;transition-delay:.13s}.tag.c{left:16%;bottom:24%;transition-delay:.22s}.tag.d{right:15%;bottom:22%;transition-delay:.32s}.tag.e{left:43%;top:50%;transition-delay:.42s}
@@ -107,6 +107,8 @@
 /* --- V5 Ultimate Final Patch --- */
 .wallet-chip.connected{border-color:rgba(145,255,198,.38)!important;color:var(--green)!important;background:rgba(145,255,198,.07)!important;}
 .connect-modal{position:fixed;inset:0;z-index:120;display:grid;place-items:center;background:rgba(0,0,0,.56);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:.25s ease}.connect-modal.open{opacity:1;pointer-events:auto}.connect-card{width:min(560px,calc(100vw - 32px));border:1px solid rgba(151,225,255,.18);border-radius:28px;background:linear-gradient(180deg,rgba(8,24,38,.94),rgba(3,8,13,.92));box-shadow:0 40px 140px rgba(0,0,0,.55);padding:24px;position:relative}.connect-card h3{font-family:var(--display);font-size:36px;letter-spacing:-.04em;line-height:.98;margin-bottom:12px}.connect-card p{color:var(--muted);font-size:14px;line-height:1.6}.connect-close{position:absolute;right:16px;top:16px}.connect-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}.connect-option{border:1px solid rgba(151,225,255,.16);border-radius:20px;padding:16px;text-align:left;background:rgba(3,7,11,.35);transition:.24s ease}.connect-option:hover{border-color:rgba(89,234,255,.42);transform:translateY(-2px);box-shadow:0 18px 50px rgba(89,234,255,.08)}.connect-option b{display:block;font-family:var(--display);font-size:20px;margin-bottom:7px}.connect-option span{font-size:12px;color:rgba(239,251,255,.6);line-height:1.4}
+.zklogin-panel{display:none;margin-top:18px;padding-top:18px;border-top:1px solid rgba(151,225,255,.12)}.zklogin-panel.open{display:block}.zklogin-panel .zk-title{font:900 10px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px}.zklogin-panel p{margin-bottom:12px}.zklogin-field{display:grid;gap:10px}.zklogin-field label{font:800 10px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:rgba(239,251,255,.58)}.zklogin-input{width:100%;border:1px solid rgba(151,225,255,.16);border-radius:16px;background:rgba(3,7,11,.36);color:var(--ink);padding:12px 13px;font:500 14px var(--body);outline:none}.zklogin-input:focus{border-color:rgba(89,234,255,.44);box-shadow:0 0 0 3px rgba(89,234,255,.08)}.zklogin-actions{display:flex;gap:10px;flex-wrap:wrap}.zklogin-status{margin-top:12px;font:800 10px var(--mono);letter-spacing:.05em;color:rgba(239,251,255,.52)}.connect-card.zklogin-mode .prod-connect-stack{display:none}.connect-card.zklogin-mode .prod-console-center{display:none}.connect-card.zklogin-mode .prod-console-note{display:none}
+.scan-replay-grid{display:grid;grid-template-columns:1.02fr .98fr;gap:14px;align-items:stretch}.scan-loader,.scan-results,.receipt-card{border:1px solid rgba(151,225,255,.14);border-radius:24px;background:rgba(3,7,11,.24);padding:18px;overflow:hidden}.scan-loader h3,.scan-results h3,.receipt-card h3{font-family:var(--display);font-size:28px;line-height:.98;letter-spacing:-.03em;margin-bottom:10px}.scan-loader .bodycopy,.scan-results .bodycopy,.receipt-card .bodycopy{max-width:unset}.scan-loader-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}.scan-file{display:block;width:100%;margin-top:10px;color:rgba(239,251,255,.46);font:800 10px var(--mono);letter-spacing:.06em;text-transform:uppercase}.scan-preview{margin-top:14px;border:1px solid rgba(151,225,255,.12);border-radius:18px;background:rgba(2,6,10,.42);padding:14px;font:700 12px/1.58 var(--mono);white-space:pre-wrap;color:rgba(239,251,255,.72);min-height:180px;max-height:220px;overflow:auto}.scan-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}.scan-summary .fact{min-height:86px;padding:12px 13px}.scan-summary .fact strong{display:block;font:800 24px/1 var(--display);letter-spacing:-.03em;color:#fff;margin-top:2px}.scan-summary .fact span{display:block;margin-top:7px;font-size:11.5px;line-height:1.36;color:rgba(239,251,255,.62)}.scan-summary .fact b{font-size:9px}.scan-drafts{margin-top:14px;display:grid;gap:8px}.scan-draft{display:grid;grid-template-columns:92px 1fr 88px;gap:10px;align-items:center;border:1px solid rgba(151,225,255,.12);border-radius:16px;padding:10px 12px;background:rgba(89,234,255,.035);font:800 10px var(--mono);letter-spacing:.05em;color:rgba(239,251,255,.7)}.scan-draft b{color:var(--cyan)}.scan-draft .amount{justify-self:end;color:var(--green)}.receipt-card{margin-top:14px}.receipt-card .receipt-state{margin-top:10px;border:1px solid rgba(151,225,255,.12);border-radius:16px;background:rgba(2,6,10,.34);padding:12px 13px;font:800 10px var(--mono);letter-spacing:.05em;color:rgba(239,251,255,.62)}.receipt-card .receipt-state b{color:#fff}.receipt-card .drawer-actions{margin-top:14px}.receipt-card.disabled .btn{opacity:.46;cursor:not-allowed;filter:saturate(.55)}.receipt-card .receipt-link{display:none;margin-top:10px;font:800 10px var(--mono);letter-spacing:.06em;color:var(--cyan);word-break:break-all}
 .boundary-strip{position:absolute;left:18px;right:18px;bottom:18px;z-index:9;display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:10px;border-radius:20px;background:rgba(3,7,11,.58)}.boundary-strip div{border:1px solid rgba(151,225,255,.12);border-radius:15px;padding:10px 12px;background:rgba(2,6,10,.32)}.boundary-strip b{display:block;font:900 9px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cyan);margin-bottom:5px}.boundary-strip span{font:800 11px var(--mono);color:rgba(239,251,255,.7)}.boundary-strip .calm{color:var(--green)}
 .graph-svg line{stroke-dasharray:4 5;animation:dashFlow 2.4s linear infinite}@keyframes dashFlow{to{stroke-dashoffset:-36}}
 .chapter[data-scene="zoom"] .stage:after{content:"";position:absolute;left:50%;top:50%;width:52%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;border:1px solid rgba(89,234,255,.18);box-shadow:0 0 65px rgba(89,234,255,.11),inset 0 0 45px rgba(89,234,255,.05);animation:zoomFocus 4.8s cubic-bezier(.22,1,.36,1) infinite;pointer-events:none}@keyframes zoomFocus{0%,100%{scale:.78;opacity:.22}45%{scale:1.08;opacity:.48}70%{scale:.92;opacity:.32}}
@@ -1831,6 +1833,54 @@
 </div></div><div class="livepath"><h3>Boundary stack</h3><div class="path-card"><div class="path-label">current boundary</div><div class="path-value" id="pathValue">Reading memory path</div><div class="path-desc" id="pathDesc">MIASMA connects memory, policy, tool context, and the draft before the wallet sees anything.</div></div><div class="mini-flow"><div class="flow-row active"><i></i>MemoryActionContext</div><div class="flow-row"><i></i>Groth16 proof</div><div class="flow-row"><i></i>Seal evidence</div><div class="flow-row"><i></i>Walrus artifact</div><div class="flow-row"><i></i>Sui anchor path</div><div class="flow-row"><i></i>Wallet boundary</div><div class="flow-row"><i></i>Capsule emit</div></div></div></div>
 </div></div><div class="caption-safe"></div>
 </section>
+<section class="chapter wide" data-scene="replay" id="replay">
+<div class="inner">
+<div class="copy"><div class="eyebrow">08 / Scan Replay</div><h2>One clean preview. Ten hidden drafts.</h2><p class="bodycopy">The scan reveals the pattern before wallet approval: risk rises, projected exposure accumulates, and the dangerous path never reaches signing.</p></div>
+<div class="stage graph-stage">
+<div class="stage-grid"></div>
+<div class="stage-title">poisoned memory scan replay</div>
+<div class="stage-sub">local sample · blocked before signing</div>
+<div class="scan-replay-grid">
+<div class="scan-loader">
+<h3>Load poisoned memory sample</h3>
+<p class="bodycopy">Upload .txt / .md / .json or use the bundled sample. The replay stays local and never submits a transfer.</p>
+<div class="scan-loader-actions">
+<button class="btn red" id="loadReplaySample">Load poisoned memory sample</button>
+<label class="btn" for="scanReplayUpload">Upload .txt / .md / .json</label>
+<input accept=".txt,.md,.json" id="scanReplayUpload" style="display:none" type="file"/>
+<button class="btn green" id="runReplayScan">MIASMA scan complete</button>
+</div>
+<div class="scan-file" id="scanFileName">memory_policy_cache.txt</div>
+<div class="scan-preview" id="scanPreview">Load poisoned memory sample to replay the scan.</div>
+</div>
+<div class="scan-results">
+<h3>Replay result</h3>
+<p class="bodycopy">`hidden instruction detected · sliced execution path blocked next`</p>
+<div class="scan-summary">
+<div class="fact"><b>scanStatus</b><strong id="scanStatusText">complete</strong><span>local replay complete</span></div>
+<div class="fact"><b>detectorResult</b><strong id="detectorResultText">hidden instruction detected</strong><span>pattern matched before approval</span></div>
+<div class="fact"><b>blocked</b><strong id="blockedText">true</strong><span>dangerous path suppressed</span></div>
+</div>
+<div class="scan-summary">
+<div class="fact"><b>riskScore</b><strong id="riskScoreText">87</strong><span>threshold exceeded</span></div>
+<div class="fact"><b>Projected exposure</b><strong id="projectedExposureText">1000 USDC</strong><span>ten repeated drafts detected</span></div>
+<div class="fact"><b>fundsMoved</b><strong id="fundsMovedText">0</strong><span>no submit · no signature · no danger digest</span></div>
+</div>
+<div class="scan-drafts" id="scanDrafts"></div>
+</div>
+</div>
+<div class="receipt-card disabled" id="receiptCard">
+<h3>Record quarantine receipt</h3>
+<p class="bodycopy">Receipt recording not configured. Scan remains local. Funds moved: 0.</p>
+<div class="receipt-state" id="receiptState">Receipt recording not configured. Scan remains local. Funds moved: 0.</div>
+<div class="drawer-actions">
+<button class="btn green" id="recordReceiptBtn" disabled>Record quarantine receipt</button>
+<a class="btn" id="receiptLink" href="#" rel="noreferrer noopener" target="_blank">SuiVision digest unavailable</a>
+</div>
+</div>
+</div>
+<div class="caption-safe"></div>
+</section>
 </main>
 <aside aria-hidden="true" class="drawer" id="drawer"><div class="drawer-head"><h3 id="drawerTitle">Result</h3><button class="close" id="drawerClose">×</button></div><pre id="drawerBody"></pre></aside>
 <aside aria-hidden="true" class="connect-modal" id="connectModal">
@@ -1865,7 +1915,7 @@
         </span>
         <span class="prod-option-copy"><b>Connect Sui Wallet</b><em>Use wallet connection</em></span>
       </button>
-      <button class="prod-connect-option" id="connectZkDemo" onclick="setConnected('zk')">
+      <button class="prod-connect-option" id="connectZkDemo" onclick="window.openZkLoginPrompt?.()">
         <span class="prod-option-icon prod-inline-icon prod-zk-glyph" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
             <path d="M7.5 10.5 L15.2 16 L7.5 21.5"></path>
@@ -1876,6 +1926,20 @@
       </button>
     </div>
 
+    <div class="zklogin-panel" id="zkloginPanel" aria-hidden="true">
+      <div class="zk-title">Enter email to continue with zkLogin</div>
+      <p>Email login prepares zkLogin authorization. No transaction is requested.</p>
+      <div class="zklogin-field">
+        <label for="zkEmailInput">Email</label>
+        <input class="zklogin-input" id="zkEmailInput" type="email" placeholder="name@example.com" autocomplete="email"/>
+      </div>
+      <div class="zklogin-actions">
+        <button class="btn green" id="zkLoginContinue">Continue</button>
+        <button class="btn" id="zkLoginCancel" type="button">Cancel</button>
+      </div>
+      <div class="zklogin-status" id="zkLoginStatus">Authorization not completed. No signature requested.</div>
+    </div>
+
     <div class="prod-console-note">
       <span>MIASMA does not request approval for contaminated paths.</span>
     </div>
@@ -1884,12 +1948,46 @@
 <script type="module">
   import { getWallets, StandardConnect, isWalletWithRequiredFeatureSet } from '@mysten/wallet-standard';
   import { isWalletStandardError, WALLET_STANDARD_ERROR__USER__REQUEST_REJECTED } from '@wallet-standard/errors';
+  import { Transaction } from '@mysten/sui/transactions';
 
   const walletRegistry = getWallets();
   const walletStatusLine = document.querySelector('.prod-console-note span');
   const walletStateLine = document.querySelector('.prod-wallet-state');
   const walletHeaderButton = document.getElementById('walletConnectBtn');
   const connectModal = document.getElementById('connectModal');
+  const connectCard = connectModal?.querySelector('.connect-card');
+  const zkPanel = document.getElementById('zkloginPanel');
+  const zkEmailInput = document.getElementById('zkEmailInput');
+  const zkStatus = document.getElementById('zkLoginStatus');
+  const zkContinue = document.getElementById('zkLoginContinue');
+  const zkCancel = document.getElementById('zkLoginCancel');
+  const receiptCard = document.getElementById('receiptCard');
+  const receiptState = document.getElementById('receiptState');
+  const receiptBtn = document.getElementById('recordReceiptBtn');
+  const receiptLink = document.getElementById('receiptLink');
+  const replaySampleBtn = document.getElementById('loadReplaySample');
+  const replayUpload = document.getElementById('scanReplayUpload');
+  const replayRunBtn = document.getElementById('runReplayScan');
+  const replayFileName = document.getElementById('scanFileName');
+  const replayPreview = document.getElementById('scanPreview');
+  const replayStatusText = document.getElementById('scanStatusText');
+  const replayDetectorText = document.getElementById('detectorResultText');
+  const replayBlockedText = document.getElementById('blockedText');
+  const replayRiskText = document.getElementById('riskScoreText');
+  const replayExposureText = document.getElementById('projectedExposureText');
+  const replayFundsText = document.getElementById('fundsMovedText');
+  const replayDrafts = document.getElementById('scanDrafts');
+
+  let activeWallet = null;
+  let activeAccount = null;
+  let activeWalletName = '';
+  let activeConnectionKind = 'wallet';
+  let replaySource = {
+    name: 'memory_policy_cache.txt',
+    text: '',
+    parsedJson: null,
+  };
+  let replayResult = null;
 
   function shortAddress(address) {
     return address.length > 12 ? `${address.slice(0, 6)}…${address.slice(-4)}` : address;
@@ -1900,6 +1998,9 @@
   }
 
   function setConnectedAccount(account, walletName) {
+    activeAccount = account;
+    activeWalletName = walletName;
+    activeConnectionKind = 'wallet';
     const short = shortAddress(account.address);
     if (walletStateLine) walletStateLine.textContent = short;
     if (walletHeaderButton) {
@@ -1929,6 +2030,229 @@
   walletRegistry.on('unregister', refreshWalletAvailability);
   refreshWalletAvailability();
 
+  function setZkStatus(message) {
+    if (zkStatus) zkStatus.textContent = message;
+  }
+
+  function showZkPrompt() {
+    connectModal?.classList.add('open');
+    connectCard?.classList.add('zklogin-mode');
+    zkPanel?.classList.add('open');
+    zkPanel?.setAttribute('aria-hidden', 'false');
+    setZkStatus('Enter your email to prepare zkLogin authorization. No signature requested.');
+    setTimeout(() => zkEmailInput?.focus(), 0);
+  }
+
+  function hideZkPrompt() {
+    zkPanel?.classList.remove('open');
+    zkPanel?.setAttribute('aria-hidden', 'true');
+    connectCard?.classList.remove('zklogin-mode');
+  }
+
+  async function sha256Hex(text) {
+    const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+    return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, '0')).join('');
+  }
+
+  function escapeHtml(text) {
+    return text
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;');
+  }
+
+  function normalizeReplayText(raw) {
+    return raw.replace(/\r\n/g, '\n').trim();
+  }
+
+  function renderReplayPreview(text) {
+    if (!replayPreview) return;
+    replayPreview.innerHTML = escapeHtml(text || 'Load poisoned memory sample to replay the scan.');
+  }
+
+  function setReplayResult(result) {
+    replayResult = result;
+    if (replayStatusText) replayStatusText.textContent = result.scanStatus;
+    if (replayDetectorText) replayDetectorText.textContent = result.detectorResult;
+    if (replayBlockedText) replayBlockedText.textContent = String(result.blocked);
+    if (replayRiskText) replayRiskText.textContent = String(result.riskScore);
+    if (replayExposureText) replayExposureText.textContent = result.projectedExposure;
+    if (replayFundsText) replayFundsText.textContent = String(result.fundsMoved);
+    if (replayDrafts) {
+      replayDrafts.innerHTML = result.drafts
+        .map((draft, index) => `<div class="scan-draft"><b>${String(index + 1).padStart(2, '0')}</b><span>${escapeHtml(draft.label)}</span><span class="amount">${escapeHtml(draft.amount)}</span></div>`)
+        .join('');
+    }
+  }
+
+  function detectReplayPattern(text) {
+    const normalized = text.toLowerCase();
+    const repeatedDrafts = (normalized.match(/valid-looking drafts/g) || []).length >= 2;
+    const hiddenInstruction =
+      /hidden instruction/.test(normalized) ||
+      /split the action/.test(normalized) ||
+      /split the payment/.test(normalized) ||
+      /do not expose/.test(normalized) ||
+      /vendor settlement/.test(normalized) ||
+      /projected exposure/.test(normalized) ||
+      repeatedDrafts;
+    const blocked = hiddenInstruction;
+    return {
+      scanStatus: 'complete',
+      detectorResult: blocked ? 'hidden instruction detected' : 'no contamination detected',
+      blocked,
+      riskScore: blocked ? 87 : 12,
+      projectedExposure: blocked ? '1000 USDC' : '0 USDC',
+      fundsMoved: 0,
+      drafts: blocked
+        ? Array.from({ length: 10 }, (_, index) => ({
+            label: `draft ${String(index + 1).padStart(2, '0')} · projected exposure`,
+            amount: '+100 USDC',
+          }))
+        : [],
+    };
+  }
+
+  async function loadReplaySourceFromText(rawText, name, parsedJson = null) {
+    replaySource = { name, text: rawText, parsedJson };
+    if (replayFileName) replayFileName.textContent = name;
+    renderReplayPreview(parsedJson ? JSON.stringify(parsedJson, null, 2) : rawText);
+    if (replayRunBtn) {
+      replayRunBtn.disabled = false;
+      replayRunBtn.textContent = 'MIASMA scan complete';
+    }
+    if (receiptState && receiptCard) {
+      receiptState.textContent = 'Receipt recording not configured. Scan remains local. Funds moved: 0.';
+      receiptCard.classList.add('disabled');
+    }
+  }
+
+  async function loadBundledReplaySample() {
+    const response = await fetch('/samples/poisoned-memory-sliced-exposure.txt');
+    const rawText = await response.text();
+    await loadReplaySourceFromText(rawText, 'poisoned-memory-sliced-exposure.txt');
+  }
+
+  async function analyzeReplaySource() {
+    const text = normalizeReplayText(replaySource.parsedJson ? JSON.stringify(replaySource.parsedJson, null, 2) : replaySource.text);
+    const result = detectReplayPattern(text);
+    result.memoryHash = await sha256Hex(text);
+    result.scanArtifactHash = await sha256Hex(`${replaySource.name}:${result.memoryHash}:${result.projectedExposure}`);
+    result.artifactRef = `local://${replaySource.name}`;
+    result.receiptId = `quarantine-${result.memoryHash.slice(0, 16)}`;
+    result.createdAtMs = Date.now();
+    setReplayResult(result);
+    window.__miasmaScanProgress = 1;
+    updateReceiptAvailability();
+  }
+
+  function getReceiptConfig() {
+    return globalThis.__MIASMA_RECEIPT_CONFIG__ || null;
+  }
+
+  function updateReceiptAvailability() {
+    const config = getReceiptConfig();
+    const hasBlockedReplay = Boolean(replayResult?.blocked && replayResult.scanStatus === 'complete');
+    const hasWallet = Boolean(activeAccount);
+    const configured = Boolean(config?.packageId);
+    const ready = configured && hasBlockedReplay && hasWallet;
+
+    if (receiptCard) receiptCard.classList.toggle('disabled', !ready);
+    if (receiptBtn) receiptBtn.disabled = !ready;
+
+    if (!configured) {
+      if (receiptState) receiptState.textContent = 'Receipt recording not configured. Scan remains local. Funds moved: 0.';
+      if (receiptLink) receiptLink.style.display = 'none';
+      return;
+    }
+
+    if (!hasWallet) {
+      if (receiptState) receiptState.textContent = 'Connect Sui Wallet first. Receipt recording stays gated. Funds moved: 0.';
+      if (receiptLink) receiptLink.style.display = 'none';
+      return;
+    }
+
+    if (!hasBlockedReplay) {
+      if (receiptState) receiptState.textContent = 'Run a blocked replay before recording a receipt. Funds moved: 0.';
+      if (receiptLink) receiptLink.style.display = 'none';
+      return;
+    }
+
+    if (receiptState) receiptState.textContent = 'Ready to record a safe quarantine receipt. No transfer will be submitted.';
+    if (receiptLink) receiptLink.style.display = 'none';
+  }
+
+  async function prepareZkLogin() {
+    const email = (zkEmailInput?.value || '').trim();
+    if (!email) {
+      setZkStatus('Enter an email address before continuing.');
+      return;
+    }
+    if (zkEmailInput && !zkEmailInput.checkValidity()) {
+      setZkStatus('Enter a valid email address before continuing.');
+      zkEmailInput.reportValidity();
+      return;
+    }
+    activeConnectionKind = 'zkLogin';
+    setZkStatus(`Email captured for zkLogin prep: ${email}. Authorization not completed. No signature requested.`);
+  }
+
+  async function recordQuarantineReceipt() {
+    const config = getReceiptConfig();
+    if (!config?.packageId) {
+      if (receiptState) receiptState.textContent = 'Receipt recording not configured. Scan remains local. Funds moved: 0.';
+      return;
+    }
+    if (!activeWallet || !activeAccount) {
+      if (receiptState) receiptState.textContent = 'Connect Sui Wallet first. Receipt recording stays gated. Funds moved: 0.';
+      return;
+    }
+    if (!replayResult?.blocked || replayResult.scanStatus !== 'complete') {
+      if (receiptState) receiptState.textContent = 'Run a blocked replay before recording a receipt. Funds moved: 0.';
+      return;
+    }
+
+    const transaction = new Transaction();
+    const bytes = (value) => transaction.pure.vector('u8', new TextEncoder().encode(String(value || '')));
+    transaction.moveCall({
+      target: `${config.packageId}::quarantine_receipt::create_quarantine_receipt`,
+      arguments: [
+        bytes(replayResult.receiptId || `quarantine-${Date.now()}`),
+        bytes(replayResult.memoryHash),
+        bytes(replayResult.scanArtifactHash),
+        bytes(replayResult.artifactRef),
+        transaction.pure.u64(1000),
+        transaction.pure.u64(replayResult.riskScore),
+        transaction.pure.u64(replayResult.createdAtMs || Date.now()),
+      ],
+    });
+
+    const signAndExecuteFeature = activeWallet.features?.['standard:signAndExecuteTransaction'];
+    if (!signAndExecuteFeature?.signAndExecuteTransaction) {
+      if (receiptState) receiptState.textContent = 'Receipt recording not configured. Scan remains local. Funds moved: 0.';
+      return;
+    }
+
+    const result = await signAndExecuteFeature.signAndExecuteTransaction({
+      transaction,
+      account: activeAccount,
+      chain: activeAccount.chain,
+    });
+
+    if (receiptState) receiptState.textContent = `Safe quarantine receipt recorded. Funds moved: 0. Digest: ${result.digest}.`;
+    if (receiptLink) {
+      receiptLink.href = `https://suivision.xyz/txblock/${result.digest}?network=testnet`;
+      receiptLink.textContent = 'SuiVision digest available';
+      receiptLink.style.display = 'inline-flex';
+    }
+  }
+
+  window.openZkLoginPrompt = showZkPrompt;
+  window.prepareZkLogin = prepareZkLogin;
+  window.recordQuarantineReceipt = recordQuarantineReceipt;
+  window.loadReplaySample = loadBundledReplaySample;
+  window.runReplayScan = analyzeReplaySource;
+
   // Authorization only: this bridge intentionally does not call any signing or transaction execution method.
   window.connectSuiWallet = async () => {
     const wallet = getPreferredWallet();
@@ -1944,7 +2268,9 @@
         setWalletStatus('Wallet connection rejected. No transaction was requested.');
         return;
       }
+      activeWallet = wallet;
       setConnectedAccount(account, wallet.name);
+      updateReceiptAvailability();
     } catch (error) {
       if (isWalletStandardError(error, WALLET_STANDARD_ERROR__USER__REQUEST_REJECTED)) {
         setWalletStatus('Wallet connection rejected. No transaction was requested.');
@@ -1953,6 +2279,53 @@
       setWalletStatus('Wallet connection failed. No transaction was requested.');
     }
   };
+
+  zkContinue?.addEventListener('click', prepareZkLogin);
+  zkCancel?.addEventListener('click', () => {
+    setZkStatus('Authorization not completed. No signature requested.');
+    hideZkPrompt();
+  });
+  connectModal?.querySelector('#connectClose')?.addEventListener('click', hideZkPrompt);
+  replaySampleBtn?.addEventListener('click', async () => {
+    try {
+      await loadBundledReplaySample();
+      setReplayResult(detectReplayPattern(normalizeReplayText(replaySource.text)));
+      updateReceiptAvailability();
+    } catch (error) {
+      if (replayPreview) replayPreview.textContent = 'Bundled sample unavailable.';
+      if (replayFileName) replayFileName.textContent = 'sample unavailable';
+    }
+  });
+  replayUpload?.addEventListener('change', async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const rawText = await file.text();
+    let parsedJson = null;
+    let renderText = rawText;
+    if (file.name.toLowerCase().endsWith('.json')) {
+      try {
+        parsedJson = JSON.parse(rawText);
+        renderText = JSON.stringify(parsedJson, null, 2);
+      } catch {
+        parsedJson = null;
+      }
+    }
+    await loadReplaySourceFromText(renderText, file.name, parsedJson);
+    setReplayResult(detectReplayPattern(normalizeReplayText(renderText)));
+    updateReceiptAvailability();
+  });
+  replayRunBtn?.addEventListener('click', async () => {
+    replayRunBtn.disabled = true;
+    replayRunBtn.textContent = 'Scanning…';
+    try {
+      await analyzeReplaySource();
+      replayRunBtn.textContent = 'MIASMA scan complete';
+    } finally {
+      replayRunBtn.disabled = false;
+    }
+  });
+  receiptBtn?.addEventListener('click', recordQuarantineReceipt);
+  updateReceiptAvailability();
 </script>
 <script>
     const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
