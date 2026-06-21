@@ -2,9 +2,9 @@ import { DeepBookClient } from '@mysten/deepbook-v3';
 import { Transaction } from '@mysten/sui/transactions';
 import type { EvidenceCapsule } from './lib/miasma/evidence-capsule';
 
-export const HEY_SUI_NAME = 'MIASMA';
-export const HEY_SUI_TAGLINE = 'Pre-execution memory-action quarantine for agentic Sui actions.';
-export const HEY_SUI_SCOPE = 'Block. Verify. Proceed.';
+export const MIASMA_NAME = 'MIASMA';
+export const MIASMA_TAGLINE = 'Pre-execution memory-action quarantine for agentic Sui actions.';
+export const MIASMA_SCOPE = 'Block. Verify. Proceed.';
 export const DEFAULT_NETWORK = (import.meta.env.VITE_SUI_NETWORK || 'testnet') as
   | 'mainnet'
   | 'testnet'
