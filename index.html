@@ -1855,7 +1855,7 @@
     </div>
 
     <div class="prod-connect-stack">
-      <button class="prod-connect-option primary" id="connectWalletDemo" onclick="setConnected('wallet')">
+      <button class="prod-connect-option primary" id="connectWalletDemo" onclick="window.connectSuiWallet?.()">
         <span class="prod-option-icon prod-inline-icon prod-wallet-glyph" aria-hidden="true">
           <svg viewBox="0 0 32 32" focusable="false">
             <rect x="7" y="10" width="18" height="13" rx="3.2"></rect>
@@ -1881,6 +1881,79 @@
     </div>
   </div>
 </aside>
+<script type="module">
+  import { getWallets, StandardConnect, isWalletWithRequiredFeatureSet } from '@mysten/wallet-standard';
+  import { isWalletStandardError, WALLET_STANDARD_ERROR__USER__REQUEST_REJECTED } from '@wallet-standard/errors';
+
+  const walletRegistry = getWallets();
+  const walletStatusLine = document.querySelector('.prod-console-note span');
+  const walletStateLine = document.querySelector('.prod-wallet-state');
+  const walletHeaderButton = document.getElementById('walletConnectBtn');
+  const connectModal = document.getElementById('connectModal');
+
+  function shortAddress(address) {
+    return address.length > 12 ? `${address.slice(0, 6)}…${address.slice(-4)}` : address;
+  }
+
+  function setWalletStatus(message) {
+    if (walletStatusLine) walletStatusLine.textContent = message;
+  }
+
+  function setConnectedAccount(account, walletName) {
+    const short = shortAddress(account.address);
+    if (walletStateLine) walletStateLine.textContent = short;
+    if (walletHeaderButton) {
+      walletHeaderButton.textContent = `Connected ${short}`;
+      walletHeaderButton.title = `${walletName} ${account.address}`;
+    }
+    setWalletStatus('Wallet connected. No signature requested. Funds moved: 0.');
+    connectModal?.classList.remove('open');
+  }
+
+  function getPreferredWallet() {
+    const wallets = walletRegistry.get().filter((wallet) => isWalletWithRequiredFeatureSet(wallet, [StandardConnect]));
+    return wallets.find((wallet) => /slush/i.test(wallet.name)) ?? wallets[0] ?? null;
+  }
+
+  function refreshWalletAvailability() {
+    const wallets = walletRegistry.get().filter((wallet) => isWalletWithRequiredFeatureSet(wallet, [StandardConnect]));
+    if (!wallets.length) {
+      setWalletStatus('No Sui wallet detected. Install or unlock Slush, then try again.');
+      return;
+    }
+    const slush = wallets.find((wallet) => /slush/i.test(wallet.name));
+    setWalletStatus(slush ? 'Slush detected. Connect to authorize account access only.' : 'Sui wallet detected. Connect to authorize account access only.');
+  }
+
+  walletRegistry.on('register', refreshWalletAvailability);
+  walletRegistry.on('unregister', refreshWalletAvailability);
+  refreshWalletAvailability();
+
+  // Authorization only: this bridge intentionally does not call any signing or transaction execution method.
+  window.connectSuiWallet = async () => {
+    const wallet = getPreferredWallet();
+    if (!wallet) {
+      setWalletStatus('No Sui wallet detected. Install or unlock Slush, then try again.');
+      return;
+    }
+
+    try {
+      const { accounts } = await wallet.features[StandardConnect].connect();
+      const account = accounts?.[0];
+      if (!account) {
+        setWalletStatus('Wallet connection rejected. No transaction was requested.');
+        return;
+      }
+      setConnectedAccount(account, wallet.name);
+    } catch (error) {
+      if (isWalletStandardError(error, WALLET_STANDARD_ERROR__USER__REQUEST_REJECTED)) {
+        setWalletStatus('Wallet connection rejected. No transaction was requested.');
+        return;
+      }
+      setWalletStatus('Wallet connection failed. No transaction was requested.');
+    }
+  };
+</script>
 <script>
     const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
     const chapters=$$('.chapter'), rail=$$('.rail a'), progress=$('#progress'); let active=0, sceneProgress=0;
@@ -2078,8 +2151,6 @@ what is not invented:
       connectModal?.classList.remove('open');
     }
     window.setConnected = setConnected;
-    $('#connectWalletDemo')?.addEventListener('click',()=>setConnected('wallet'));
-    $('#connectZkDemo')?.addEventListener('click',()=>setConnected('zk'));
 
     const runBtn = $('#runMiasmaScan');
     const loadBtn = $('#loadMemorySample');
