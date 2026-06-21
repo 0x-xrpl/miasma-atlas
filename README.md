@@ -4,7 +4,7 @@
 
 # MIASMA
 
-**Agentic memory-action firewall for Sui agents**
+**Memory-action quarantine for agentic Sui actions**
 
 The agent was not hacked at execution.  
 It was poisoned in memory.
