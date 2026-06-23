@@ -33,7 +33,7 @@
     .brand-mark:before,.brand-mark:after{content:"";position:absolute;inset:7px;border:1px solid rgba(255,77,120,.56);border-radius:50%}.brand-mark:after{inset:11px;border-color:rgba(145,255,198,.72)}
     .topnav{pointer-events:auto;display:flex;align-items:center;gap:6px;padding:6px;border:1px solid rgba(151,225,255,.12);border-radius:999px;background:rgba(4,10,16,.40);backdrop-filter:blur(18px)}
     .topnav a{font:800 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(239,251,255,.55);padding:8px 10px;border-radius:999px;transition:.25s ease;white-space:nowrap}.topnav a:hover{color:var(--cyan);background:rgba(89,234,255,.08)}
-    .top-actions{pointer-events:auto;display:flex;gap:8px;align-items:center}.pill{border:1px solid rgba(151,225,255,.18);background:rgba(3,7,11,.44);backdrop-filter:blur(14px);border-radius:999px;padding:8px 12px;font:800 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(239,251,255,.76);white-space:nowrap}.pill.hot{border-color:rgba(89,234,255,.42);color:var(--cyan);box-shadow:0 0 22px rgba(89,234,255,.11)}
+    .top-actions{pointer-events:auto;display:flex;gap:8px;align-items:center}.pill{border:1px solid rgba(151,225,255,.18);background:rgba(3,7,11,.44);backdrop-filter:blur(14px);border-radius:999px;padding:8px 12px;font:800 10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:rgba(239,251,255,.76);white-space:nowrap}.pill.hot{border-color:rgba(89,234,255,.42);color:var(--cyan);box-shadow:0 0 22px rgba(89,234,255,.11)}.pill.zk-preview-active{border-color:rgba(145,255,198,.42);color:var(--green);background:linear-gradient(180deg,rgba(145,255,198,.12),rgba(3,7,11,.52));box-shadow:0 0 24px rgba(145,255,198,.18),inset 0 0 0 1px rgba(145,255,198,.08)}
     .rail{position:fixed;z-index:70;right:16px;top:50%;transform:translateY(-50%);width:var(--rail);display:flex;flex-direction:column;gap:3px;padding:9px;border:1px solid rgba(151,225,255,.13);border-radius:20px;background:rgba(4,10,16,.48);backdrop-filter:blur(18px);box-shadow:0 28px 80px rgba(0,0,0,.36)}
     .rail a{height:24px;border-radius:10px;display:grid;grid-template-columns:22px 1fr;align-items:center;gap:6px;padding:0 7px;color:rgba(226,246,255,.39);font:800 9px var(--mono);letter-spacing:.035em;text-transform:uppercase;transition:.24s ease;white-space:nowrap}.rail .n{color:rgba(89,234,255,.34)}.rail a.active{color:#effbff;background:rgba(89,234,255,.10);box-shadow:inset 0 0 0 1px rgba(89,234,255,.18)}.rail a.active .n{color:var(--cyan)}
 
@@ -4723,9 +4723,16 @@ what is not invented:
     const connectModal = $('#connectModal');
     const walletBtn = $('#walletConnectBtn');
     const consoleState = $('#consoleState');
+    const walletBtnDefaultLabel = walletBtn?.textContent?.trim() || 'Open Console';
     const consoleNote = document.querySelector('.prod-console-note span');
     const defaultConsoleNote = 'Wallet or zkLogin is used only for a clean Evidence Capsule hash anchor.';
     const presentationConsoleNote = 'Presentation route active · No signature requested · No transaction submitted · Dangerous path remains suppressed · Funds moved: 0';
+
+    function setWalletButtonPresentation(active){
+      if(!walletBtn) return;
+      walletBtn.classList.toggle('zk-preview-active', !!active);
+      walletBtn.textContent = active ? 'zkLogin connected' : walletBtnDefaultLabel;
+    }
 
     function setConsoleNote(text){
       if(consoleNote) consoleNote.textContent = text;
@@ -4750,6 +4757,7 @@ what is not invented:
       hideZkValidation();
       if(consoleState) consoleState.textContent='Locked';
       setConsoleNote(defaultConsoleNote);
+      setWalletButtonPresentation(false);
     }
 
     function closeConsole(){
@@ -4771,6 +4779,7 @@ what is not invented:
       connectModal?.classList.add('console-zk-preview-mode');
       if(consoleState) consoleState.textContent='zkLogin connected';
       setConsoleNote(presentationConsoleNote);
+      setWalletButtonPresentation(true);
     }
 
     function validZkEmail(value){
@@ -4819,6 +4828,7 @@ what is not invented:
       hideZkValidation();
       if(consoleState) consoleState.textContent='zkLogin';
       setConsoleNote(defaultConsoleNote);
+      setWalletButtonPresentation(false);
       // App integration target: continue from here into the configured OAuth/OpenID zkLogin route.
       // Do not display fake proof, digest, address, or completed login state in this HTML.
     });
