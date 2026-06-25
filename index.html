@@ -4226,6 +4226,81 @@ body.combined-00-15 #capsule.back-block .caption-safe{height:124px!important;}
 #connectModal.console-zk-mode .prod-console-note{display:none!important;}
 #connectModal.console-zk-mode .zk-email-panel{display:grid!important;}
 #connectModal.console-zk-preview-mode .prod-console-note{display:block!important;}
+
+/* Design system repair pass: stronger control states and visible brand mark. */
+.brand-logo-img{
+  filter:drop-shadow(0 0 14px rgba(89,234,255,.20)) saturate(1.08) contrast(1.08)!important;
+}
+
+#walletConnectBtn{
+  position:relative;
+  min-width:170px;
+  justify-content:center;
+  transition:transform .2s ease,border-color .2s ease,background .2s ease,box-shadow .2s ease,color .2s ease;
+}
+
+#walletConnectBtn.zk-preview-active{
+  border-color:rgba(145,255,198,.52)!important;
+  background:linear-gradient(180deg,rgba(145,255,198,.16),rgba(3,7,11,.72))!important;
+  color:#effff6!important;
+  box-shadow:
+    0 0 0 1px rgba(145,255,198,.10),
+    0 0 24px rgba(145,255,198,.22),
+    inset 0 0 18px rgba(145,255,198,.08)!important;
+  text-shadow:0 0 12px rgba(145,255,198,.18);
+  letter-spacing:.14em;
+  transform:translateY(-1px);
+}
+
+#walletConnectBtn.zk-preview-active::before{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  border-radius:inherit;
+  border:1px solid rgba(145,255,198,.16);
+  pointer-events:none;
+}
+
+#walletConnectBtn.zk-preview-active::after{
+  content:"";
+  position:absolute;
+  inset:6px;
+  border-radius:inherit;
+  background:radial-gradient(circle at 50% 20%,rgba(145,255,198,.12),transparent 55%);
+  pointer-events:none;
+}
+
+#connectModal .prod-wallet-orb{
+  border:1px solid rgba(89,234,255,.18);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.04),
+    0 0 18px rgba(89,234,255,.10),
+    0 0 34px rgba(157,114,255,.08);
+}
+
+#connectModal .prod-connect-option,
+#connectModal .btn,
+#connectModal .zk-action-btn{
+  box-shadow:none;
+}
+
+#connectModal .prod-connect-option.primary,
+#connectModal .zk-action-btn.primary,
+.btn.green{
+  border-color:rgba(145,255,198,.24);
+}
+
+#connectModal.console-zk-preview-mode .prod-wallet-state{
+  border-color:rgba(145,255,198,.28);
+  color:var(--green);
+  background:rgba(145,255,198,.06);
+}
+
+#connectModal.console-zk-preview-mode .prod-console-kicker{
+  border-color:rgba(145,255,198,.22);
+  color:var(--green);
+  background:rgba(145,255,198,.05);
+}
 </style>
 </head>
 <body class="combined-00-15 eight-only continuation-08-15">
@@ -4728,10 +4803,11 @@ what is not invented:
     const defaultConsoleNote = 'Wallet or zkLogin is used only for a clean Evidence Capsule hash anchor.';
     const presentationConsoleNote = 'Presentation route active · No signature requested · No transaction submitted · Dangerous path remains suppressed · Funds moved: 0';
 
-    function setWalletButtonPresentation(active){
+    function setWalletButtonPresentation(active,label='ZKLOGIN'){
       if(!walletBtn) return;
       walletBtn.classList.toggle('zk-preview-active', !!active);
-      walletBtn.textContent = active ? 'zkLogin connected' : walletBtnDefaultLabel;
+      walletBtn.setAttribute('aria-pressed', active ? 'true' : 'false');
+      walletBtn.textContent = active ? label : walletBtnDefaultLabel;
     }
 
     function setConsoleNote(text){
@@ -4739,11 +4815,15 @@ what is not invented:
     }
 
     function openConsole(event){
-      connectModal?.classList.add('open');
-      connectModal?.setAttribute('aria-hidden','false');
       if(event?.shiftKey){
         showZkPresentationRoute();
+      }else if(event?.altKey){
+        showWalletPresentationRoute();
+      }else{
+        setWalletButtonPresentation(false);
       }
+      connectModal?.classList.add('open');
+      connectModal?.setAttribute('aria-hidden','false');
     }
 
     function hideZkValidation(){
@@ -4757,7 +4837,6 @@ what is not invented:
       hideZkValidation();
       if(consoleState) consoleState.textContent='Locked';
       setConsoleNote(defaultConsoleNote);
-      setWalletButtonPresentation(false);
     }
 
     function closeConsole(){
@@ -4779,7 +4858,15 @@ what is not invented:
       connectModal?.classList.add('console-zk-preview-mode');
       if(consoleState) consoleState.textContent='zkLogin connected';
       setConsoleNote(presentationConsoleNote);
-      setWalletButtonPresentation(true);
+      setWalletButtonPresentation(true,'ZKLOGIN');
+    }
+
+    function showWalletPresentationRoute(){
+      connectModal?.classList.add('console-zk-mode');
+      connectModal?.classList.add('console-zk-preview-mode');
+      if(consoleState) consoleState.textContent='Wallet connected';
+      setConsoleNote('Wallet route active · No signature requested · No transaction submitted · Dangerous path remains suppressed · Funds moved: 0');
+      setWalletButtonPresentation(true,'WALLET CONNECTED');
     }
 
     function validZkEmail(value){
